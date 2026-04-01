@@ -28,7 +28,7 @@ class StudentForm
                     ->searchable(),
                 Select::make('kelas')
                     ->options([
-                        '10 BP' => '10 BP ',
+                        '10 BP' => '10 BP',
                         '10 TJKT 1' => '10 TJKT 1',
                         '10 TJKT 2' => '10 TJKT 2',
                         '10 TJKT 3' => '10 TJKT 3',
@@ -51,7 +51,7 @@ class StudentForm
                         '12 RPL 3' => '12 RPL 3',
                         '12 TKJ 1' => '12 TKJ 1',
                         '12 TKJ 2' => '12 TKJ 2',
-                        '12 TJA ' => '12 TJA ',
+                        '12 TJA' => '12 TJA',
                     ])  
                     ->required()
                     ->searchable(),
