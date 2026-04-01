@@ -12,7 +12,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Actions\Action;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UserImport;
-
+use Filament\Notifications\Notification;
 
 class StudentsTable
 {
@@ -59,7 +59,22 @@ class StudentsTable
                             ]),
                     ])
                     ->action(function (array $data) {
-                        Excel::import(new UserImport, $data['file']);
+                        $import = new UserImport(); // bikin instance
+
+                            Excel::import($import, $data['file']);
+
+                            if (count($import->duplicates) > 0) {
+                                Notification::make()
+                                    ->title('Duplicate ditemukan')
+                                    ->body(implode("\n", $import->duplicates))
+                                    ->danger()
+                                    ->send();
+                            } else {
+                                Notification::make()
+                                    ->title('Import berhasil')
+                                    ->success()
+                                    ->send();
+                            }
                     }),
 
                 BulkActionGroup::make([
