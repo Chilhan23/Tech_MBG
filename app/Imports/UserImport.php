@@ -10,21 +10,20 @@ class UserImport implements ToCollection
 {
     public function collection(Collection $rows)
     {
-        foreach ($rows->skip(1) as $row) {
+       $duplicates = [];
 
-            // mapping jurusan
-            $jurusanMap = [
-                'RPL' => 'Rekayasa Perangkat Lunak',
-                'TKJ' => 'Teknik Komputer dan Jaringan',
-                'TJA' => 'Tehnik Jaringan Akses',
-                'PF'  => 'Perfilman',
-            ];
+        foreach ($rows->skip(1) as $index => $row) {
+
+            if (Student::where('nisn', $row[0])->exists()) {
+                $duplicates[] = "Baris " . ($index + 1) . " - NISN {$row[0]} sudah ada";
+                continue;
+            }
 
             Student::create([
                 'nisn' => $row[0],
                 'name' => $row[1],
-                'jurusan' => $jurusanMap[$row[2]] ?? $row[2],
-                'kelas' => trim($row[3]),
+                'jurusan' => $row[2],
+                'kelas' => $row[3],
                 'jenis_kelamin' => $row[4],
             ]);
         }
