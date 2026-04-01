@@ -29,16 +29,10 @@ class AbsensisTable
                 TextColumn::make('student.jurusan')
                     ->label('Jurusan')
                     ->sortable(),
-                BadgeColumn::make('status')
-                    ->label('Status')
-                    ->colors(['success'])
-                    ->icon('heroicon-o-check-circle')
-                    ->formatStateUsing(fn () => 'Sudah Ambil'),
                 TextColumn::make('created_at')
                     ->label('Waktu Scan')
                     ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
             ])
             ->filters([
                 Filter::make('created_at')
@@ -56,7 +50,6 @@ class AbsensisTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

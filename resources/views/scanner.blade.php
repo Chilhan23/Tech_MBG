@@ -112,6 +112,9 @@
         const manualSubmit = document.getElementById('manual-submit');
         const manualNisn = document.getElementById('manual-nisn');
 
+        let html5QrCode = null;
+        let html5QrCodeScanner = null;
+
         manualSubmit.addEventListener('click', () => {
             if (!manualNisn.value.trim()) {
                 message.textContent = 'Masukkan NISN terlebih dahulu.';
@@ -121,17 +124,51 @@
             scanForm.submit();
         });
 
+        function submitScan() {
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    scanForm.submit();
+                }).catch(() => {
+                    scanForm.submit();
+                });
+                return;
+            }
+
+            if (html5QrCodeScanner) {
+                html5QrCodeScanner.clear().then(() => {
+                    scanForm.submit();
+                }).catch(() => {
+                    scanForm.submit();
+                });
+                return;
+            }
+
+            scanForm.submit();
+        }
+
+        function getNisnFromDecodedText(decodedText) {
+            try {
+                const url = new URL(decodedText);
+
+                if (url.searchParams.has('nisn')) {
+                    return url.searchParams.get('nisn');
+                }
+            } catch (error) {
+                // decodedText bukan URL, gunakan langsung sebagai NISN
+            }
+
+            return decodedText;
+        }
+
         function onScanSuccess(decodedText) {
             if (!decodedText) {
                 return;
             }
-            nisnInput.value = decodedText;
-            message.textContent = 'QR Code terdeteksi: ' + decodedText + '. Mengirimkan data...';
-            html5QrCode.stop().then(() => {
-                scanForm.submit();
-            }).catch(() => {
-                scanForm.submit();
-            });
+
+            const scannedValue = getNisnFromDecodedText(decodedText);
+            nisnInput.value = scannedValue;
+            message.textContent = 'QR Code terdeteksi: ' + scannedValue + '. Mengirimkan data...';
+            submitScan();
         }
 
         function onScanFailure(error) {
@@ -139,24 +176,52 @@
             message.textContent = 'Scan gagal. Coba pilih file QR atau gunakan kamera lain.';
         }
 
-        try {
-            const html5QrCodeScanner = new Html5QrcodeScanner(
-                'reader',
-                {
-                    fps: 10,
-                    qrbox: { width: 280, height: 280 },
-                    rememberLastUsedCamera: true,
-                    showTorchButtonIfSupported: true,
-                    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA, Html5QrcodeScanType.SCAN_TYPE_FILE],
-                },
-                false,
-            );
+        function startScanner() {
+            try {
+                html5QrCodeScanner = new Html5QrcodeScanner(
+                    'reader',
+                    {
+                        fps: 10,
+                        qrbox: { width: 280, height: 280 },
+                        rememberLastUsedCamera: true,
+                        showTorchButtonIfSupported: true,
+                        supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA, Html5QrcodeScanType.SCAN_TYPE_FILE],
+                    },
+                    false,
+                );
 
-            html5QrCodeScanner.render(onScanSuccess, onScanFailure);
-            message.textContent = 'Arahkan kamera ke QR Code atau pilih file jika tidak muncul.';
-        } catch (err) {
-            message.textContent = 'Tidak dapat memulai scanner: ' + err;
+                html5QrCodeScanner.render(onScanSuccess, onScanFailure);
+                message.textContent = 'Arahkan kamera ke QR Code atau pilih file jika tidak muncul.';
+            } catch (err) {
+                message.textContent = 'Tidak dapat memulai scanner: ' + err;
+            }
         }
+
+        Html5Qrcode.getCameras()
+            .then(cameras => {
+                if (cameras && cameras.length) {
+                    const cameraId = cameras[0].id;
+                    html5QrCode = new Html5Qrcode('reader');
+                    html5QrCode.start(
+                        cameraId,
+                        { fps: 10, qrbox: { width: 280, height: 280 } },
+                        onScanSuccess,
+                        onScanFailure,
+                    ).then(() => {
+                        message.textContent = 'Arahkan kamera ke QR Code siswa.';
+                    }).catch(err => {
+                        message.textContent = 'Kamera ditemukan tapi gagal dibuka: ' + err + '. Menggunakan fallback scan.';
+                        startScanner();
+                    });
+                    return;
+                }
+
+                startScanner();
+            })
+            .catch(err => {
+                message.textContent = 'Gagal memeriksa kamera: ' + err + '. Menggunakan fallback scan.';
+                startScanner();
+            });
     </script>
 </body>
 </html>

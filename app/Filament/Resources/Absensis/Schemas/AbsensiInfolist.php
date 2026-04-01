@@ -11,9 +11,16 @@ class AbsensiInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('students_id')
-                    ->numeric(),
+                TextEntry::make('student.nisn')
+                    ->label('NISN'),
+                TextEntry::make('student.name')
+                    ->label('Nama Siswa'),
+                TextEntry::make('student.kelas')
+                    ->label('Kelas'),
+                TextEntry::make('student.jurusan')
+                    ->label('Jurusan'),
                 TextEntry::make('created_at')
+                    ->label('Waktu Scan')
                     ->dateTime(),
             ]);
     }

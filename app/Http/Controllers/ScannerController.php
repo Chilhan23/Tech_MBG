@@ -38,6 +38,45 @@ class ScannerController extends Controller
         return back()->with('success', 'Absensi berhasil dicatat untuk ' . $student->name . '.');
     }
 
+    public function scan(Request $request)
+    {
+        $nisn = $request->query('nisn');
+
+        if (! filled($nisn)) {
+            return view('scanner_result', [
+                'success' => false,
+                'message' => 'Parameter NISN tidak ditemukan di URL.',
+            ]);
+        }
+
+        $student = Student::where('nisn', $nisn)->first();
+
+        if (! $student) {
+            return view('scanner_result', [
+                'success' => false,
+                'message' => 'Siswa tidak ditemukan untuk NISN: ' . $nisn,
+            ]);
+        }
+
+        $already = $student->absensis()
+            ->whereDate('created_at', now()->toDateString())
+            ->exists();
+
+        if ($already) {
+            return view('scanner_result', [
+                'success' => false,
+                'message' => 'Siswa sudah mengambil makan hari ini.',
+            ]);
+        }
+
+        $student->absensis()->save(new Absensi());
+
+        return view('scanner_result', [
+            'success' => true,
+            'message' => 'Absensi berhasil dicatat untuk ' . $student->name . '.',
+        ]);
+    }
+
     public function print(Student $student)
     {
         return view('print_qr', compact('student'));

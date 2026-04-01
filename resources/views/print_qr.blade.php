@@ -85,7 +85,7 @@
                 <div><b>Jurusan:</b> {{ $student->jurusan }}</div>
             </div>
             <div class="qr">
-                {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(280)->generate($student->nisn) !!}
+                {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(280)->generate(route('scanner.public_scan', ['nisn' => $student->nisn], true)) !!}
             </div>
         </div>
     </div>
