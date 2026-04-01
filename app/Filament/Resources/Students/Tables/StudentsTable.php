@@ -42,6 +42,27 @@ class StudentsTable
                 //
             ])
             ->recordActions([
+                Action::make('qr_code')
+                    ->label('QR Code')
+                    ->icon('heroicon-o-qr-code')
+                    ->modalHeading('QR Code Siswa')
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Tutup')
+                    ->modalContent(fn ($record) => new \Illuminate\Support\HtmlString('
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
+                            <div style="padding: 15px; background: white; border-radius: 10px; margin-bottom: 20px;">
+                                ' . \SimpleSoftwareIO\QrCode\Facades\QrCode::size(250)->generate($record->nisn) . '
+                            </div>
+                            <h3 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 5px;">'.$record->name.'</h3>
+                            <p style="color: gray; font-size: 1rem;">'.$record->nisn.'</p>
+                            <p style="color: gray; font-size: 0.9rem;">'.$record->kelas.' '.$record->jurusan.'</p>
+                        </div>
+                    ')),
+                Action::make('print_qr')
+                    ->label('Cetak QR')
+                    ->icon('heroicon-o-printer')
+                    ->url(fn ($record): string => route('students.qr.print', ['student' => $record]))
+                    ->openUrlInNewTab(),
                 ViewAction::make(),
                 EditAction::make(),
             ])
@@ -59,7 +80,7 @@ class StudentsTable
                             ]),
                     ])
                     ->action(function (array $data) {
-                        $import = new UserImport(); // bikin instance
+                        $import = new UserImport(); 
 
                             Excel::import($import, $data['file']);
 
@@ -71,7 +92,7 @@ class StudentsTable
                                     ->send();
                             } else {
                                 Notification::make()
-                                    ->title('Import berhasil')
+                                    ->title('Data berhasil diimpor')
                                     ->success()
                                     ->send();
                             }
