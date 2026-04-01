@@ -13,8 +13,7 @@ class StudentForm
         return $schema
             ->components([
                 TextInput::make('nisn')
-                    ->required()
-                    ->numeric(),
+                    ->required(),
                 TextInput::make('name')
                     ->required(),
                 Select::make('jurusan')
