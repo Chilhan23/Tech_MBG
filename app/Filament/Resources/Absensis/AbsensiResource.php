@@ -22,6 +22,13 @@ class AbsensiResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static ?string $navigationLabel = 'Absensi MBG';
+
+    protected static ?string $modelLabel = 'Absensi MBG';
+
+    protected static ?string $pluralModelLabel = 'Absensi MBG';
+
+
     public static function form(Schema $schema): Schema
     {
         return AbsensiForm::configure($schema);
