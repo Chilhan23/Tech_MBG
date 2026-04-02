@@ -1,17 +1,17 @@
 <?php
-
 namespace App\Filament\Resources\Absensis\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Columns\BadgeColumn;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Student;
 
 class AbsensisTable
 {
@@ -35,17 +35,55 @@ class AbsensisTable
                     ->sortable(),
             ])
             ->filters([
+                //  Filter Tanggal
                 Filter::make('created_at')
+                    ->label('Tanggal')
                     ->form([
                         DatePicker::make('created_from')
-                            ->label('Dari tanggal'),
+                            ->label('Dari Tanggal'),
                         DatePicker::make('created_until')
-                            ->label('Sampai tanggal'),
+                            ->label('Sampai Tanggal'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
-                            ->when($data['created_from'], fn (Builder $query, $date) => $query->whereDate('created_at', '>=', $date))
-                            ->when($data['created_until'], fn (Builder $query, $date) => $query->whereDate('created_at', '<=', $date));
+                            ->when($data['created_from'],
+                                fn (Builder $query, $date) =>
+                                    $query->whereDate('created_at', '>=', $date))
+                            ->when($data['created_until'],
+                                fn (Builder $query, $date) =>
+                                    $query->whereDate('created_at', '<=', $date));
+                    }),
+                // Filter Jurusan
+                SelectFilter::make('jurusan')
+                    ->label('Jurusan')
+                    ->options(fn () => Student::query()
+                        ->distinct()
+                        ->orderBy('jurusan')
+                        ->pluck('jurusan', 'jurusan')
+                        ->toArray()
+                    )
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when($data['value'],
+                            fn (Builder $query, $value) =>
+                                $query->whereHas('student',
+                                    fn ($q) => $q->where('jurusan', $value))
+                        );
+                    }),
+                // Filter Kelas
+                SelectFilter::make('kelas')
+                    ->label('Kelas')
+                    ->options(fn () => Student::query()
+                        ->distinct()
+                        ->orderBy('kelas')
+                        ->pluck('kelas', 'kelas')
+                        ->toArray()
+                    )
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when($data['value'],
+                            fn (Builder $query, $value) =>
+                                $query->whereHas('student',
+                                    fn ($q) => $q->where('kelas', $value))
+                        );
                     }),
             ])
             ->recordActions([
