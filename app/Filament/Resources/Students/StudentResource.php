@@ -22,6 +22,12 @@ class StudentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+     protected static ?string $navigationLabel = 'Data Siswa/i';
+
+    protected static ?string $modelLabel = 'Data Siswa/i';
+
+    protected static ?string $pluralModelLabel = 'Data Siswa/i';
+
     public static function form(Schema $schema): Schema
     {
         return StudentForm::configure($schema);

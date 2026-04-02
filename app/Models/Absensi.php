@@ -6,5 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Absensi extends Model
 {
-    //
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'student_id');
+    }
 }

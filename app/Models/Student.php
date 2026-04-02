@@ -14,5 +14,7 @@ class Student extends Model
         'kelas',
         'jenis_kelamin',
     ];  
-    
+    public function absensis(){
+        return $this->hasMany(Absensi::class);
+    }
 }
