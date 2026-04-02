@@ -8,13 +8,11 @@ use Illuminate\Http\Request;
 
 class ScannerController extends Controller
 {
-    public function index()
-    {
+    public function index(){
         return view('scanner');
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $data = $request->validate([
             'nisn' => ['required', 'string'],
         ]);
@@ -34,12 +32,13 @@ class ScannerController extends Controller
         }
 
         $student->absensis()->save(new Absensi());
-
         return back()->with('success', 'Absensi berhasil dicatat untuk ' . $student->name . '.');
     }
 
-    public function scan(Request $request)
-    {
+
+
+
+    public function scan(Request $request){
         $nisn = $request->query('nisn');
 
         if (! filled($nisn)) {
@@ -77,8 +76,7 @@ class ScannerController extends Controller
         ]);
     }
 
-    public function apiStore(Request $request)
-    {
+    public function apiStore(Request $request){
         $data = $request->validate([
             'nisn' => ['required', 'string'],
         ]);
@@ -126,25 +124,16 @@ class ScannerController extends Controller
         ], 200);
     }
 
-    public function print(Student $student)
-    {
+    public function print(Student $student){
         return view('print_qr', compact('student'));
     }
 
-    /**
-     * Bulk print — cetak QR semua siswa yang dipilih sekaligus.
-     * URL: /cetak-qr/bulk?ids=1,2,3,4
-     */
-    public function bulkPrint(Request $request)
-    {
+    
+    public function bulkPrint(Request $request){
         $ids = array_filter(explode(',', $request->query('ids', '')));
-
         abort_if(empty($ids), 400, 'Tidak ada siswa yang dipilih.');
-
         $students = Student::whereIn('id', $ids)->orderBy('kelas')->orderBy('name')->get();
-
         abort_if($students->isEmpty(), 404, 'Siswa tidak ditemukan.');
-
         return view('print_qr_bulk', compact('students'));
     }
 

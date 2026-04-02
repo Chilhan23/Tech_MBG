@@ -240,7 +240,7 @@
                         <span>Banda Aceh</span>
                     </div>
                 </div>
-                <div class="card-type">E-KARTU SISWA</div>
+                <div class="card-type">E-KARTU MBG SISWA</div>
             </div>
 
             <div class="card-body">
@@ -256,7 +256,7 @@
                         </div>
                         <div class="info-row">
                             <label>Kelas / Jurusan</label>
-                            <span>{{ $student->kelas }} / {{ $student->jurusan }}</span>
+                            <span>{{ Str::after($student->kelas, ' ') }} / {{ $student->jurusan }}</span>
                         </div>
                     </div>
                 </div>
