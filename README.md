@@ -1,6 +1,4 @@
-Gemini berkata
 Tech_MBG: Digital Attendance & Student Management System
-
 A modern, QR-based attendance management system designed for seamless student tracking and data management through a centralized panitia (committee) panel.
 
  Getting Started for Operators
