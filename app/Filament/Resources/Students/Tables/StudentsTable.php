@@ -10,10 +10,12 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Forms\Components\FileUpload;
 use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UserImport;
 use Filament\Notifications\Notification;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Collection;
 
 class StudentsTable
 {
@@ -41,7 +43,7 @@ class StudentsTable
             ])
             ->filters([
 
-                // Filter Jurusan 
+                // Filter Jurusan
                 SelectFilter::make('jurusan')
                     ->label('Jurusan')
                     ->options([
@@ -108,7 +110,7 @@ class StudentsTable
                 EditAction::make(),
             ])
             ->toolbarActions([
-                 Action::make('import')
+                Action::make('import')
                     ->label('Masukan Data Siswa/i Lewat Excel')
                     ->icon('heroicon-o-arrow-up-tray')
                     ->form([
@@ -121,25 +123,35 @@ class StudentsTable
                             ]),
                     ])
                     ->action(function (array $data) {
-                        $import = new UserImport(); 
+                        $import = new UserImport();
 
-                            Excel::import($import, $data['file']);
+                        Excel::import($import, $data['file']);
 
-                            if (count($import->duplicates) > 0) {
-                                Notification::make()
-                                    ->title('Duplicate ditemukan')
-                                    ->body(implode("\n", $import->duplicates))
-                                    ->danger()
-                                    ->send();
-                            } else {
-                                Notification::make()
-                                    ->title('Data berhasil diimpor')
-                                    ->success()
-                                    ->send();
-                            }
+                        if (count($import->duplicates) > 0) {
+                            Notification::make()
+                                ->title('Duplicate ditemukan')
+                                ->body(implode("\n", $import->duplicates))
+                                ->danger()
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title('Data berhasil diimpor')
+                                ->success()
+                                ->send();
+                        }
                     }),
 
                 BulkActionGroup::make([
+                    // Bulk print QR — cetak semua QR siswa yang dicentang sekaligus
+                    BulkAction::make('bulk_print_qr')
+                        ->label('Cetak QR Terpilih')
+                        ->icon('heroicon-o-printer')
+                        ->action(function (Collection $records) {
+                            $ids = $records->pluck('id')->join(',');
+                            // Buka halaman bulk print di tab baru
+                            redirect()->away(route('students.qr.bulk-print', ['ids' => $ids]));
+                        })
+                        ->deselectRecordsAfterCompletion(),
                     DeleteBulkAction::make(),
                 ]),
             ]);
