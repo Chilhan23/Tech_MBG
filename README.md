@@ -27,7 +27,7 @@ Manage your student database and prepare physical identification cards:
 ### 4. 📲 Recording Presence (Scanning)
 The core of the system is the scanning interface:
 * **Internal Scanner**: Navigate to the **Scanner** page within the panel to activate the camera.
-* **Instant Scan**: Point the camera at a student's QR code. The system will automatically validate the identity and record the timestamp.
+* **Instant Scan**: Point the camera at a student's QR code. The system will automatically validate the identity and record the timestamp or you can use an external QR code scanner (USB/Wireless Scanner) and then scan it. The system will automatically process the text input from the scanner.
 
 ### 5. 📄 Reporting & Data Export
 Convert digital logs into official documentation:
