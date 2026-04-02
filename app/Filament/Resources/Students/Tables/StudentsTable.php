@@ -51,7 +51,7 @@ class StudentsTable
                     ->modalContent(fn ($record) => new \Illuminate\Support\HtmlString('
                         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
                             <div style="padding: 15px; background: white; border-radius: 10px; margin-bottom: 20px;">
-                                ' . \SimpleSoftwareIO\QrCode\Facades\QrCode::size(250)->generate(route('scanner.public_scan', ['nisn' => $record->nisn], true)) . '
+                                ' . \SimpleSoftwareIO\QrCode\Facades\QrCode::size(250)->generate($record->nisn) . '
                             </div>
                             <h3 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 5px;">'.$record->name.'</h3>
                             <p style="color: gray; font-size: 1rem;">'.$record->nisn.'</p>

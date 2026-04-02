@@ -59,10 +59,11 @@
         .manual-form input,
         .manual-form button {
             width: 100%;
-            padding: 14px 16px;
+            padding: 14px;
             border-radius: 12px;
             border: 1px solid #d1d5db;
             font-size: 1rem;
+            box-sizing: border-box;
         }
         .manual-form button {
             background: #2563eb;
@@ -154,7 +155,7 @@
                     return url.searchParams.get('nisn');
                 }
             } catch (error) {
-                // decodedText bukan URL, gunakan langsung sebagai NISN
+                
             }
 
             return decodedText;
