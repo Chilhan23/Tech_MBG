@@ -225,7 +225,7 @@
     <div class="wrapper">
         <div class="header-text">
             <h1 style="margin-top:0; color:#0068b3; font-weight: 800;">E-Kartu Siswa SMKN 5 Telkom</h1>
-            <p style="color:#64748b; font-size:14px; margin-bottom:25px;">Desain dioptimasi untuk ukuran standar KTP ($85.6 \times 54$ mm).</p>
+            <p style="color:#64748b; font-size:14px; margin-bottom:25px;">{{ $student->name }}/{{ $student->nisn }}</p>
         </div>
 
         <div class="card">
