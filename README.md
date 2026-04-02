@@ -1,26 +1,40 @@
-Tech_MBG: Digital Attendance & Student Management System
-A modern, QR-based attendance management system designed for seamless student tracking and data management through a centralized panitia (committee) panel.
+# 🚀 Tech_MBG: Digital Attendance & Student Management
 
- Getting Started for Operators
+A modern, high-performance attendance system using **QR Code scanning** to bridge the gap between physical identification and digital records. Built for efficiency, accuracy, and ease of use.
 
-This guide focuses on how to use the system's core features to manage students and attendance efficiently.
-1. Accessing the Panitia Panel
-The system is centered around a dedicated administrative portal.
+---
 
-    Automatic Redirect: Accessing the root URL will automatically direct you to the /panitia login page.
+## 📖 User Guide
 
-    Login: Use your committee credentials to access the secure dashboard.
-2. Dashboard Overview
-Upon logging in, you are presented with a real-time data overview:
+Follow these steps to manage students and track attendance effectively through the **Panitia Panel**.
 
-    Attendance Stats: View overall attendance numbers via the "Absensi Stats" widget.
+### 1. 🔐 Accessing the Command Center
+The entire system is managed via a secure administrative portal.
+* **Portal Entry**: Simply visit the root domain; you will be automatically redirected to the `/panitia` portal.
+* **Authentication**: Sign in with your authorized credentials to unlock the management tools.
 
-    Class Analysis: Monitor attendance distribution across different groups using the "Absensi Per Kelas" chart.
-3. Student & QR Management
-Before recording attendance, student data must be managed:
+### 2. 📊 Real-Time Monitoring
+Once logged in, the **Dashboard** provides an instant overview of your operations:
+* **Attendance Stats**: Track live check-in numbers through the `AbsensiStatsWidget`.
+* **Class Analysis**: View a breakdown of attendance per class via the `AbsensiPerKelasWidget`.
 
-    Student Registration: Manage student records through the Students resource menu.
+### 3. 👨‍🎓 Student & QR Management
+Manage your student database and prepare physical identification cards:
+* **Manage Students**: Add, edit, or view student profiles through the **Students** resource menu.
+* **Single QR Print**: Generate and print a QR code for a specific student from their profile page.
+* **Bulk QR Generation**: Use the **Bulk Print** feature to generate QR codes for the entire student body in one go.
 
-    Single QR Generation: You can print a QR code for an individual student directly from their profile.
+### 4. 📲 Recording Presence (Scanning)
+The core of the system is the scanning interface:
+* **Internal Scanner**: Navigate to the **Scanner** page within the panel to activate the camera.
+* **Instant Scan**: Point the camera at a student's QR code. The system will automatically validate the identity and record the timestamp.
 
-    Bulk QR Printing: For large-scale preparation, use the Bulk Print feature to generate QR codes for all students at once.
+### 5. 📄 Reporting & Data Export
+Convert digital logs into official documentation:
+* **Review Logs**: Access the **Absensis** menu to see every recorded entry.
+* **PDF Export**: Generate professional, formatted attendance reports using the **Export PDF** tool for archival or administrative submission.
+
+---
+
+> [!IMPORTANT]
+> **Security Protocol**: All administrative and scanning functions are protected. Only panitia members with valid sessions can access the `/panitia` routes or perform scans.
