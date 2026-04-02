@@ -13,6 +13,7 @@ use Filament\Actions\Action;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UserImport;
 use Filament\Notifications\Notification;
+use Filament\Tables\Filters\SelectFilter;
 
 class StudentsTable
 {
@@ -39,7 +40,47 @@ class StudentsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+
+                // Filter Jurusan 
+                SelectFilter::make('jurusan')
+                    ->label('Jurusan')
+                    ->options([
+                        'Rekayasa Perangkat Lunak' => 'Rekayasa Perangkat Lunak',
+                        'Teknik Komputer dan Jaringan' => 'Teknik Komputer dan Jaringan',
+                        'Tehnik Jaringan Akses' => 'Tehnik Jaringan Akses',
+                        'Perfilman' => 'Perfilman',
+                    ]),
+
+                // Filter Kelas
+                SelectFilter::make('kelas')
+                    ->label('Kelas')
+                    ->options([
+                        '10 BP' => '10 BP',
+                        '10 TJKT 1' => '10 TJKT 1',
+                        '10 TJKT 2' => '10 TJKT 2',
+                        '10 TJKT 3' => '10 TJKT 3',
+                        '10 PPLG 1' => '10 PPLG 1',
+                        '10 PPLG 2' => '10 PPLG 2',
+                        '10 PPLG 3' => '10 PPLG 3',
+                        '11 PF 1' => '11 PF 1',
+                        '11 PF 2' => '11 PF 2',
+                        '11 RPL 1' => '11 RPL 1',
+                        '11 RPL 2' => '11 RPL 2',
+                        '11 RPL 3' => '11 RPL 3',
+                        '11 TKJ 1' => '11 TKJ 1',
+                        '11 TKJ 2' => '11 TKJ 2',
+                        '11 TJA 1' => '11 TJA 1',
+                        '11 TJA 2' => '11 TJA 2',
+                        '12 PF 1' => '12 PF 1',
+                        '12 PF 2' => '12 PF 2',
+                        '12 RPL 1' => '12 RPL 1',
+                        '12 RPL 2' => '12 RPL 2',
+                        '12 RPL 3' => '12 RPL 3',
+                        '12 TKJ 1' => '12 TKJ 1',
+                        '12 TKJ 2' => '12 TKJ 2',
+                        '12 TJA' => '12 TJA',
+                    ]),
+
             ])
             ->recordActions([
                 Action::make('qr_code')

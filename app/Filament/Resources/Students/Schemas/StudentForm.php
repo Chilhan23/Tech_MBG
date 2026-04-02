@@ -13,10 +13,16 @@ class StudentForm
         return $schema
             ->components([
                 TextInput::make('nisn')
-                    ->numeric()
+                    ->label('NISN')
+                    ->maxLength(20)
+                    ->regex('/^[0-9]+$/')
+                    ->validationMessages([
+                        'regex' => 'NISN hanya boleh berisi angka.',
+                    ])
                     ->unique(ignoreRecord: true)
                     ->required(),
                 TextInput::make('name')
+                    ->label('Nama')
                     ->required(),
                 Select::make('jurusan')
                     ->options([
@@ -28,6 +34,7 @@ class StudentForm
                     ->required()
                     ->searchable(),
                 Select::make('kelas')
+                    ->label('Kelas')
                     ->options([
                         '10 BP' => '10 BP',
                         '10 TJKT 1' => '10 TJKT 1',
@@ -57,6 +64,7 @@ class StudentForm
                     ->required()
                     ->searchable(),
                 Select::make('jenis_kelamin')
+                    ->label('Jenis Kelamin')
                     ->options([
                         'Laki-laki' => 'Laki-laki',
                         'Perempuan' => 'Perempuan',
