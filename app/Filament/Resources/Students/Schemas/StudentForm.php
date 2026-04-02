@@ -13,6 +13,7 @@ class StudentForm
         return $schema
             ->components([
                 TextInput::make('nisn')
+                    ->numeric()
                     ->unique(ignoreRecord: true)
                     ->required(),
                 TextInput::make('name')
