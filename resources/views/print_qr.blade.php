@@ -263,7 +263,7 @@
 
                 <div class="qr-section">
                     {{-- Ukuran QR disesuaikan agar proporsional --}}
-                    {!! QrCode::size(75)->margin(0)->color(0, 104, 179)->generate(route('scanner.public_scan', ['nisn' => $student->nisn])) !!}
+                    {!! QrCode::size(75)->margin(0)->color(0, 104, 179)->generate($student->nisn) !!}
                     <div class="qr-label">SCAN QR CODE</div>
                 </div>
             </div>
