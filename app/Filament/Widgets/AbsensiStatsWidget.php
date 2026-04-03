@@ -6,18 +6,41 @@ use App\Models\Absensi;
 use App\Models\Student;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Auth;
 
 class AbsensiStatsWidget extends BaseWidget
 {
     protected function getStats(): array
     {
-        $totalSiswa = Student::count();
-        $sudahAmbil = Absensi::whereDate('created_at', today())->distinct('student_id')->count();
+        $user = Auth::user();
+
+        // Query siswa — filter kelas kalau admin
+        $studentQuery = Student::query();
+        if ($user && $user->role === 'admin' && $user->kelas) {
+            $studentQuery->where('kelas', $user->kelas);
+        }
+
+        $totalSiswa = $studentQuery->count();
+
+        // Query absensi — filter kelas kalau admin
+        $absensiQuery = Absensi::whereDate('created_at', today());
+        if ($user && $user->role === 'admin' && $user->kelas) {
+            $absensiQuery->whereHas('student',
+                fn ($q) => $q->where('kelas', $user->kelas)
+            );
+        }
+
+        $sudahAmbil = $absensiQuery->distinct('student_id')->count();
         $belumAmbil = $totalSiswa - $sudahAmbil;
+
+        // Label scope — superadmin lihat "semua", admin lihat kelasnya
+        $scope = ($user && $user->role === 'admin' && $user->kelas)
+            ? 'Kelas ' . $user->kelas
+            : 'Semua Kelas';
 
         return [
             Stat::make('Total Siswa', $totalSiswa)
-                ->description('Total seluruh siswa terdaftar')
+                ->description($scope)
                 ->icon('heroicon-o-users')
                 ->color('info'),
 

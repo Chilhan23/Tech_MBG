@@ -15,18 +15,31 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;  
+use Illuminate\Support\Facades\Auth;        
 
 class StudentResource extends Resource
 {
     protected static ?string $model = Student::class;
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
-     protected static ?string $navigationLabel = 'Data Siswa/i';
-
+    protected static ?string $navigationLabel = 'Data Siswa/i';
     protected static ?string $modelLabel = 'Data Siswa/i';
-
     protected static ?string $pluralModelLabel = 'Data Siswa/i';
+
+    // ── Filter data berdasarkan role user ────────────────────
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+        $user  = Auth::user();
+
+        // Admin kelas hanya lihat siswa kelasnya sendiri
+        if ($user && $user->role === 'admin' && $user->kelas) {
+            $query->where('kelas', $user->kelas);
+        }
+
+        // Superadmin → tidak ada filter, lihat semua
+        return $query;
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -45,18 +58,16 @@ class StudentResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListStudents::route('/'),
+            'index'  => ListStudents::route('/'),
             'create' => CreateStudent::route('/create'),
-            'view' => ViewStudent::route('/{record}'),
-            'edit' => EditStudent::route('/{record}/edit'),
+            'view'   => ViewStudent::route('/{record}'),
+            'edit'   => EditStudent::route('/{record}/edit'),
         ];
     }
 }

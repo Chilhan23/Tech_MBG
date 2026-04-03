@@ -15,19 +15,33 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class AbsensiResource extends Resource
 {
     protected static ?string $model = Absensi::class;
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
     protected static ?string $navigationLabel = 'Absensi MBG';
-
     protected static ?string $modelLabel = 'Absensi MBG';
-
     protected static ?string $pluralModelLabel = 'Absensi MBG';
 
+    // ── Filter data berdasarkan role user ────────────────────
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+        $user  = Auth::user();
+
+        // Admin kelas hanya lihat absensi siswa di kelasnya
+        if ($user && $user->role === 'admin' && $user->kelas) {
+            $query->whereHas('student',
+                fn (Builder $q) => $q->where('kelas', $user->kelas)
+            );
+        }
+
+        // Superadmin → tidak ada filter, lihat semua
+        return $query;
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -46,18 +60,16 @@ class AbsensiResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListAbsensis::route('/'),
+            'index'  => ListAbsensis::route('/'),
             'create' => CreateAbsensi::route('/create'),
-            'view' => ViewAbsensi::route('/{record}'),
-            'edit' => EditAbsensi::route('/{record}/edit'),
+            'view'   => ViewAbsensi::route('/{record}'),
+            'edit'   => EditAbsensi::route('/{record}/edit'),
         ];
     }
 }

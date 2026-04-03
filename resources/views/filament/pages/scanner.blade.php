@@ -478,13 +478,20 @@
 
     <div class="scanner-wrap">
 
-        {{-- Page Header --}}
-        <div class="sc-page-header">
-            <div>
-                <div class="sc-page-title">Scanner Pengambilan</div>
-                <div class="sc-page-subtitle">Scan barcode atau QR Code NISN untuk mencatat pengambilan siswa</div>
+        {{-- Stats --}}
+        <div class="sc-stats">
+            <div class="sc-stat">
+                <div class="sc-stat-label">Total Siswa</div>
+                <div class="sc-stat-value blue" id="stat-total">—</div>
             </div>
-            <div class="sc-page-date" id="sc-live-date">—</div>
+            <div class="sc-stat">
+                <div class="sc-stat-label">Sudah Ambil Hari Ini</div>
+                <div class="sc-stat-value green" id="stat-hadir">—</div>
+            </div>
+            <div class="sc-stat">
+                <div class="sc-stat-label">Belum Ambil</div>
+                <div class="sc-stat-value red" id="stat-belum">—</div>
+            </div>
         </div>
 
         {{-- Ready Bar --}}
@@ -666,7 +673,9 @@
                     <div><div class="sc-info-key">Nama</div><div class="sc-info-val">${s.name}</div></div>
                     <div><div class="sc-info-key">NISN</div><div class="sc-info-val">${s.nisn}</div></div>
                     <div><div class="sc-info-key">Kelas</div><div class="sc-info-val">${s.kelas}</div></div>
-                    <div><div class="sc-info-key">Jurusan</div><div class="sc-info-val">${s.jurusan}</div></div>`;
+                    <div><div class="sc-info-key">Jurusan</div><div class="sc-info-val">${s.jurusan}</div></div>
+                    ${s.waktu ? `<div style="grid-column:span 2"><div class="sc-info-key">Waktu Ambil</div><div class="sc-info-val"> ${s.waktu}</div></div>` : ''}
+                `;
             } else {
                 body.style.display = 'none';
                 body.innerHTML = '';
@@ -752,7 +761,7 @@
 
                 html5QrCode = new Html5Qrcode('reader');
                 html5QrCode.start(
-                    backCamera.id,
+                    backCamera.id, // ← pakai kamera belakang
                     { fps: 60, qrbox: { width: 220, height: 220 } },
                     onScanSuccess, () => {}
                 )
