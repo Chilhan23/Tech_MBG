@@ -22,7 +22,7 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
-    protected static ?string $navigationLabel = 'Manajemen User';
+    protected static ?string $navigationLabel = 'Manajemen Data Wali Kelas';
     protected static string|UnitEnum|null $navigationGroup = 'Pengaturan';
 
     // Function for Super Admin only
