@@ -25,7 +25,7 @@ class UserResource extends Resource
     protected static ?string $navigationLabel = 'Manajemen User';
     protected static string|UnitEnum|null $navigationGroup = 'Pengaturan';
 
-    // Hanya superadmin yang bisa lihat menu ini
+    // Function for Super Admin only
     public static function canAccess(): bool
     {
         return Auth::user()?->isSuperAdmin() ?? false;

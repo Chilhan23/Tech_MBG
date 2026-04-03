@@ -18,7 +18,7 @@ class ViewStudent extends ViewRecord
                 ->icon('heroicon-o-pencil'),
             Action::make('back')
                 ->label('Kembali')
-                ->url(static::getResource()::getUrl('index')) // Kembali ke daftar resource
+                ->url(static::getResource()::getUrl('index')) 
                 ->button()
                 ->color('gray')
                 ->icon('heroicon-o-chevron-left'),
