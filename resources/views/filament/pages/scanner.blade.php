@@ -745,7 +745,7 @@
                 setStatus('Arahkan kamera ke QR Code atau pilih file.');
             } catch (_) { setStatus('Kamera tidak tersedia. Gunakan alat scan atau input manual.'); }
         }
-        Html5Qrcode.getCameras()
+       Html5Qrcode.getCameras()
         .then(cameras => {
             if (cameras && cameras.length) {
                 const backCamera = cameras.find(c =>
@@ -756,10 +756,8 @@
 
                 html5QrCode = new Html5Qrcode('reader');
                 html5QrCode.start(
-                    backCamera.id,
-                    { fps: 60, qrbox: { width: 220, height: 220 } },
-                    backCamera.id, // ← pakai kamera belakang
-                    { fps: 60, qrbox: { width: 220, height: 400 } },
+                    { facingMode: "environment" }, // ← ini cara paksa kamera belakang
+                    { fps: 10, qrbox: { width: 800, height: 600 } },
                     onScanSuccess, () => {}
                 )
                 .then(() => setStatus('Arahkan kamera ke QR Code siswa.'))
