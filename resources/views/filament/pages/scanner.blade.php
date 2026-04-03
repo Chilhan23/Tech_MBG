@@ -284,20 +284,7 @@
     <div class="scanner-wrap">
 
         {{-- Stats --}}
-        <div class="sc-stats">
-            <div class="sc-stat">
-                <div class="sc-stat-label">Total Siswa</div>
-                <div class="sc-stat-value blue" id="stat-total">—</div>
-            </div>
-            <div class="sc-stat">
-                <div class="sc-stat-label">Sudah Ambil Hari Ini</div>
-                <div class="sc-stat-value green" id="stat-hadir">—</div>
-            </div>
-            <div class="sc-stat">
-                <div class="sc-stat-label">Belum Ambil</div>
-                <div class="sc-stat-value red" id="stat-belum">—</div>
-            </div>
-        </div>
+        {{--  --}}
 
         {{-- Ready Bar --}}
         <div class="sc-ready-bar ready" id="scan-ready-bar">
@@ -457,7 +444,9 @@
                     <div><div class="sc-info-key">Nama</div><div class="sc-info-val">${s.name}</div></div>
                     <div><div class="sc-info-key">NISN</div><div class="sc-info-val">${s.nisn}</div></div>
                     <div><div class="sc-info-key">Kelas</div><div class="sc-info-val">${s.kelas}</div></div>
-                    <div><div class="sc-info-key">Jurusan</div><div class="sc-info-val">${s.jurusan}</div></div>`;
+                    <div><div class="sc-info-key">Jurusan</div><div class="sc-info-val">${s.jurusan}</div></div>
+                    ${s.waktu ? `<div style="grid-column:span 2"><div class="sc-info-key">Waktu Ambil</div><div class="sc-info-val"> ${s.waktu}</div></div>` : ''}
+                `;
             } else {
                 body.style.display = 'none';
                 body.innerHTML = '';
@@ -545,7 +534,7 @@
                 html5QrCode = new Html5Qrcode('reader');
                 html5QrCode.start(
                     backCamera.id, // ← pakai kamera belakang
-                    { fps: 60, qrbox: { width: 220, height: 220 } },
+                    { fps: 60, qrbox: { width: 220, height: 400 } },
                     onScanSuccess, () => {}
                 )
                 .then(() => setStatus('Arahkan kamera ke QR Code siswa.'))

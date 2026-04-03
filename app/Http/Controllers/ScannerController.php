@@ -8,8 +8,7 @@ use Illuminate\Http\Request;
 
 class ScannerController extends Controller
 {
-    public function apiStore(Request $request)
-    {
+    public function apiStore(Request $request){
         $data = $request->validate([
             'nisn' => ['required', 'string'],
         ]);
@@ -24,11 +23,11 @@ class ScannerController extends Controller
             ], 404);
         }
 
-        $already = $student->absensis()
+        $absensiHariIni = $student->absensis()
             ->whereDate('created_at', now()->toDateString())
-            ->exists();
+            ->first();
 
-        if ($already) {
+        if ($absensiHariIni) {
             return response()->json([
                 'success' => false,
                 'message' => 'Siswa sudah mengambil makan hari ini.',
@@ -38,11 +37,15 @@ class ScannerController extends Controller
                     'kelas'         => $student->kelas,
                     'jurusan'       => $student->jurusan,
                     'jenis_kelamin' => $student->jenis_kelamin,
+                    'waktu'         => $absensiHariIni->created_at->format('H:i:s'),
                 ],
             ], 200);
         }
 
-        $student->absensis()->save(new Absensi());
+        // Belum ambil — catat sekarang
+        $absensi = new Absensi();
+        $student->absensis()->save($absensi);
+        $absensi->refresh(); // pastikan created_at terisi
 
         return response()->json([
             'success' => true,
@@ -53,21 +56,12 @@ class ScannerController extends Controller
                 'kelas'         => $student->kelas,
                 'jurusan'       => $student->jurusan,
                 'jenis_kelamin' => $student->jenis_kelamin,
+                'waktu'         => $absensi->created_at->format('H:i:s'),
             ],
         ], 200);
     }
 
-    public function stats()
-    {
-        $total = Student::count();
-        $hadir = Absensi::whereDate('created_at', today())->distinct('student_id')->count();
-
-        return response()->json([
-            'total' => $total,
-            'hadir' => $hadir,
-            'belum' => $total - $hadir,
-        ]);
-    }
+    
 
     public function print(Student $student)
     {
