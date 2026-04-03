@@ -75,24 +75,15 @@ class PanitiaPanelProvider extends PanelProvider
     'panels::body.start',
     fn () => request()->routeIs('filament.panitia.auth.login')
         ? Blade::render('
-            <video autoplay muted loop playsinline style="
-                position: fixed;
-                top: 0; left: 0;
-                width: 100%; height: 100%;
-                object-fit: cover;
-                z-index: 0;
-            ">
-                <source src="/videos/background.mp4" type="video/mp4">
-            </video>
-
-            <div style="
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.4);
-                z-index: 1;
-            "></div>
-
             <style>
+                body {
+                    background-image: url("/images/mbg-bg2.jpeg");
+                    background-size: cover;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    min-height: 100vh;
+                }
+
                 html body .fi-simple-layout {
                     position: relative;
                     z-index: 2;
