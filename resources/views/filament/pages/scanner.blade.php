@@ -486,8 +486,7 @@
             </div>
             <div class="sc-page-date" id="sc-live-date">—</div>
         </div>
-        {{-- Stats --}}
-        {{--  --}}
+        
 
         {{-- Ready Bar --}}
         <div class="sc-ready-bar ready" id="scan-ready-bar">
