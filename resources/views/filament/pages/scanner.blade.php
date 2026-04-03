@@ -478,21 +478,16 @@
 
     <div class="scanner-wrap">
 
-        {{-- Stats --}}
-        <div class="sc-stats">
-            <div class="sc-stat">
-                <div class="sc-stat-label">Total Siswa</div>
-                <div class="sc-stat-value blue" id="stat-total">—</div>
+        {{-- Page Header --}}
+        <div class="sc-page-header">
+            <div>
+                <div class="sc-page-title">Scanner Pengambilan</div>
+                <div class="sc-page-subtitle">Scan barcode atau QR Code NISN untuk mencatat pengambilan siswa</div>
             </div>
-            <div class="sc-stat">
-                <div class="sc-stat-label">Sudah Ambil Hari Ini</div>
-                <div class="sc-stat-value green" id="stat-hadir">—</div>
-            </div>
-            <div class="sc-stat">
-                <div class="sc-stat-label">Belum Ambil</div>
-                <div class="sc-stat-value red" id="stat-belum">—</div>
-            </div>
+            <div class="sc-page-date" id="sc-live-date">—</div>
         </div>
+        {{-- Stats --}}
+        {{--  --}}
 
         {{-- Ready Bar --}}
         <div class="sc-ready-bar ready" id="scan-ready-bar">
@@ -761,8 +756,10 @@
 
                 html5QrCode = new Html5Qrcode('reader');
                 html5QrCode.start(
-                    backCamera.id, // ← pakai kamera belakang
+                    backCamera.id,
                     { fps: 60, qrbox: { width: 220, height: 220 } },
+                    backCamera.id, // ← pakai kamera belakang
+                    { fps: 60, qrbox: { width: 220, height: 400 } },
                     onScanSuccess, () => {}
                 )
                 .then(() => setStatus('Arahkan kamera ke QR Code siswa.'))
