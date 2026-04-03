@@ -47,19 +47,22 @@ class StudentsTable
         '12 TJA'    => '12 TJA',
     ];
 
-    private static function kelasOptions(): array
+    private static function jurusanFromKelas(?string $kelas): ?string
     {
-        $user = Auth::user();
-
-        if ($user && $user->role === 'admin' && $user->kelas) {
-            return [$user->kelas => $user->kelas];
-        }
-
-        return self::KELAS_OPTIONS;
+        if (!$kelas) return null;
+        $kelas = strtoupper($kelas);
+        if (str_contains($kelas, 'RPL') || str_contains($kelas, 'PPLG')) return 'Rekayasa Perangkat Lunak';
+        if (str_contains($kelas, 'TJKT') || str_contains($kelas, 'TKJ')) return 'Teknik Komputer dan Jaringan';
+        if (str_contains($kelas, 'TJA')) return 'Tehnik Jaringan Akses';
+        if (str_contains($kelas, 'BP') || str_contains($kelas, 'PF')) return 'Perfilman';
+        return null;
     }
 
     public static function configure(Table $table): Table
     {
+        $user         = Auth::user();
+        $isAdmin      = $user && $user->role === 'admin' && $user->kelas;
+
         $toolbarActions = [];
 
         $toolbarActions[] = Action::make('import')
@@ -110,17 +113,30 @@ class StudentsTable
             DeleteBulkAction::make(),
         ]);
 
+        $filters = [];
+
+        if (!$isAdmin) {
+            $filters[] = SelectFilter::make('jurusan')
+                ->label('Jurusan')
+                ->options([
+                    'Rekayasa Perangkat Lunak'     => 'Rekayasa Perangkat Lunak',
+                    'Teknik Komputer dan Jaringan' => 'Teknik Komputer dan Jaringan',
+                    'Tehnik Jaringan Akses'        => 'Tehnik Jaringan Akses',
+                    'Perfilman'                    => 'Perfilman',
+                ]);
+
+            $filters[] = SelectFilter::make('kelas')
+                ->label('Kelas')
+                ->options(self::KELAS_OPTIONS);
+        }
+
         return $table
             ->columns([
                 TextColumn::make('nisn'),
-                TextColumn::make('name')
-                    ->searchable(),
-                TextColumn::make('jurusan')
-                    ->searchable(),
-                TextColumn::make('kelas')
-                    ->searchable(),
-                TextColumn::make('jenis_kelamin')
-                    ->searchable(),
+                TextColumn::make('name')->searchable(),
+                TextColumn::make('jurusan')->searchable(),
+                TextColumn::make('kelas')->searchable(),
+                TextColumn::make('jenis_kelamin')->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -130,19 +146,13 @@ class StudentsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                SelectFilter::make('jurusan')
-                    ->label('Jurusan')
-                    ->options([
-                        'Rekayasa Perangkat Lunak'     => 'Rekayasa Perangkat Lunak',
-                        'Teknik Komputer dan Jaringan' => 'Teknik Komputer dan Jaringan',
-                        'Tehnik Jaringan Akses'        => 'Tehnik Jaringan Akses',
-                        'Perfilman'                    => 'Perfilman',
-                    ]),
-                SelectFilter::make('kelas')
-                    ->label('Kelas')
-                    ->options(self::kelasOptions()),
-            ])
+            ->filters($filters)
+            ->modifyQueryUsing(function ($query) use ($isAdmin, $user) {
+                if ($isAdmin) {
+                    $query->where('kelas', $user->kelas);
+                }
+                return $query;
+            })
             ->recordActions([
                 Action::make('qr_code')
                     ->label('QR Code')
