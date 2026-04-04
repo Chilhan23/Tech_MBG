@@ -95,7 +95,7 @@ class AbsensiController extends Controller
             'labelScope',
             'labelJurusan',
             'labelTanggal'
-        ))->setPaper('a4', 'portrait');
+        ))->setOptions(['isRemoteEnabled' => true, 'chroot' => public_path()])->setPaper('a4', 'portrait');
 
         $slug = $kelasNama
             ? str_replace(' ', '-', strtolower($kelasNama))

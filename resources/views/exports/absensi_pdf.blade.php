@@ -18,17 +18,14 @@
         }
 
         .kop-logo {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
             width: 60px;
             height: auto;
             object-fit: contain;
+            float: left;
         }
 
         .kop-text {
-            text-align: center;
+            transform: translateX(-28px);
         }
 
         .kop h1 {
@@ -113,10 +110,13 @@
 <body>
 
 <div class="kop">
-    <h1>PEMERINTAH KOTA / KABUPATEN</h1>
-    <p>DINAS PENDIDIKAN</p>
-    <p>SMK NEGERI XXXXX</p>
-    <p>Alamat Sekolah, Kota, Provinsi</p>
+    <img src="/images/pancacita-provinsi-aceh-seeklogo.png" alt="Logo Pancasila" class="kop-logo">
+    <div class="kop-text">
+        <h1>PEMERINTAH KOTA / KABUPATEN</h1>
+        <p>DINAS PENDIDIKAN</p>
+        <p>SMK NEGERI XXXXX</p>
+        <p>Alamat Sekolah, Kota, Provinsi</p>
+    </div>
 </div>
 
 <div class="judul">
