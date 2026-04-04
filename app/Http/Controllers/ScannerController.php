@@ -1,6 +1,6 @@
 <?php
 namespace App\Http\Controllers;
-
+use App\Models\KelasLog;
 use App\Models\Absensi;
 use App\Models\Kelas;
 use App\Models\Student;
@@ -152,7 +152,7 @@ class ScannerController extends Controller
     }
 
     // ── KELAS (Pusat scan QR Kelas untuk ambil/kembalikan ompreng) ──
-    public function apiKelasStore(Request $request)
+   public function apiKelasStore(Request $request)
     {
         $data = $request->validate([
             'nama_kelas' => ['required', 'string'],
@@ -167,48 +167,67 @@ class ScannerController extends Controller
             ], 404);
         }
 
-        // Belum diambil → catat diambil
-        if (!$kelas->diambil) {
-            $kelas->update(['diambil' => now()]);
+        // Cek log HARI INI saja — persis seperti absensis
+        $log = KelasLog::where('kelas_id', $kelas->id)
+            ->whereDate('tanggal', today())
+            ->first();
+
+        // Belum ada log hari ini → catat diambil
+        if (!$log) {
+            $now = now();
+
+            $kelas->update(['diambil' => $now, 'dikembalikan' => null]);
+
+            KelasLog::create([
+                'kelas_id' => $kelas->id,
+                'tanggal'  => today(),
+                'diambil'  => $now,
+            ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Ompreng kelas ' . $kelas->nama_kelas . ' berhasil diambil!',
                 'kelas'   => [
-                    'nama_kelas'   => $kelas->nama_kelas,
-                    'status'       => 'diambil',
-                    'waktu_ambil'  => now()->format('H:i:s'),
+                    'nama_kelas'  => $kelas->nama_kelas,
+                    'status'      => 'diambil',
+                    'waktu_ambil' => $now->format('H:i:s'),
                 ],
             ]);
         }
 
-        // Sudah diambil tapi belum dikembalikan → catat dikembalikan
-        if (!$kelas->dikembalikan) {
-            $kelas->update(['dikembalikan' => now()]);
+        // Sudah diambil tapi belum dikembalikan
+        if (!$log->dikembalikan) {
+            $now = now();
+
+            $kelas->update(['dikembalikan' => $now]);
+            $log->update(['dikembalikan' => $now]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Ompreng kelas ' . $kelas->nama_kelas . ' berhasil dikembalikan!',
                 'kelas'   => [
-                    'nama_kelas'      => $kelas->nama_kelas,
-                    'status'          => 'dikembalikan',
-                    'waktu_kembali'   => now()->format('H:i:s'),
+                    'nama_kelas'    => $kelas->nama_kelas,
+                    'status'        => 'dikembalikan',
+                    'waktu_ambil'   => $log->diambil->format('H:i'),
+                    'waktu_kembali' => $now->format('H:i:s'),
                 ],
             ]);
         }
 
-        // Sudah dikembalikan
+        // Sudah selesai hari ini
         return response()->json([
             'success' => false,
-            'message' => 'Ompreng kelas ' . $kelas->nama_kelas . ' sudah dikembalikan hari ini.',
+            'message' => 'Ompreng kelas ' . $kelas->nama_kelas . ' sudah selesai hari ini.',
             'kelas'   => [
                 'nama_kelas'    => $kelas->nama_kelas,
                 'status'        => 'selesai',
-                'waktu_ambil'   => $kelas->diambil->format('H:i'),
-                'waktu_kembali' => $kelas->dikembalikan->format('H:i'),
+                'waktu_ambil'   => $log->diambil->format('H:i'),
+                'waktu_kembali' => $log->dikembalikan->format('H:i'),
             ],
         ], 422);
     }
 
-    // ── STATS ──
+    
     public function stats(Request $request)
     {
         $user    = Auth::user();
