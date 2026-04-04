@@ -91,7 +91,23 @@ class PanitiaPanelProvider extends PanelProvider
         box-shadow: none !important;
         backdrop-filter: blur(8px) !important;
         border-radius: 16px !important;
+        opacity: 0;
+        animation: cardReveal 0.8s ease 1s forwards;
     }
+
+    @keyframes cardReveal {
+        from {
+        opacity: 0;
+        transform: translateY(30px);
+        filter: blur(6px);
+    }
+        to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+        }
+    }
+
 
     .fi-simple-main,
     .fi-simple-main * {
