@@ -46,8 +46,7 @@
                     border-l-4 border-green-400">
             <x-heroicon-o-academic-cap class="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0"/>
             <p class="text-sm text-green-700 dark:text-green-300 leading-relaxed">
-                Kamu login sebagai <strong>Admin {{ $stats['scope'] }}</strong> — hanya menampilkan
-                data <strong>kelas kamu sendiri</strong>. Data kelas lain tidak bisa diakses ya.
+                Kamu login sebagai <strong>Admin {{ $stats['scope'] }}</strong>
             </p>
         </div>
     @endif
@@ -142,9 +141,6 @@
                     border-gray-100 dark:border-gray-700 p-5">
             <p class="text-xs uppercase tracking-wider font-medium text-gray-400 mb-4">
                 Progress per kelas
-                <span class="ml-1 normal-case text-gray-300">
-                    ({{ count($kelasData) }} kelas)
-                </span>
             </p>
             <div class="flex flex-col gap-3">
                 @foreach($kelasData as $k)
