@@ -77,35 +77,118 @@ class PanitiaPanelProvider extends PanelProvider
     fn () => request()->routeIs('filament.panitia.auth.login')
         ? Blade::render('
             <style>
-                body {
-                    background-image: url("/images/mbg-bg2.jpeg");
-                    background-size: cover;
-                    background-position: center;
-                    background-repeat: no-repeat;
-                    min-height: 100vh;
-                }
+    body {
+        background-image: url("/images/mbg-bg3.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+    }
 
-                html body .fi-simple-layout {
-                    position: relative;
-                    z-index: 2;
-                }
+    .fi-simple-main {
+        background: rgba(0, 0, 0, 0.5) !important;
+        border: none !important;
+        box-shadow: none !important;
+        backdrop-filter: blur(8px) !important;
+        border-radius: 16px !important;
+    }
 
-                html body .fi-simple-layout .fi-simple-main {
-                    width: 100%;
-                    max-width: 420px;
-                    border-radius: 1rem;
-                    background: rgba(255, 255, 255, 0.15);
-                    backdrop-filter: blur(12px);
-                    -webkit-backdrop-filter: blur(12px);
-                    border: 1px solid rgba(255, 255, 255, 0.3);
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-                }
+    .fi-simple-main,
+    .fi-simple-main * {
+        color: white !important;
+    }
 
-                html body .fi-simple-layout .fi-simple-main .fi-brand-name,
-                html body .fi-simple-layout .fi-simple-main h1 {
-                    color: white;
-                }
-            </style>
+    .fi-simple-main *:not(button):not(svg):not(path):not(input[type="checkbox"]) {
+        background: transparent !important;
+        background-color: transparent !important;
+    }
+
+    .fi-simple-main input:not([type="checkbox"]) {
+        border: none !important;
+        box-shadow: none !important;
+        outline: none !important;
+        color: white !important;
+        background: transparent !important;
+    }
+
+    /* Wrapper input email - border putih */
+.fi-simple-main .fi-input-wrapper,
+.fi-simple-main div:has(> input[type="email"]),
+.fi-simple-main div:has(> input:not([type="password"]):not([type="checkbox"])) {
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+}
+
+.fi-simple-main .fi-input-wrapper:focus-within,
+.fi-simple-main div:has(> input[type="email"]):focus-within {
+    border: 1px solid white !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
+}
+
+    /* Wrapper password + icon mata nyatu */
+    .fi-simple-main .fi-input-wrp-suffix {
+        border: none !important;
+        background: transparent !important;
+        display: flex !important;
+    }
+
+    /* Parent dari input + suffix yang jadi border utama password */
+    .fi-simple-main div:has(> .fi-input-wrp-suffix) {
+        border: 1px solid rgba(255, 255, 255, 0.6) !important;
+        border-radius: 8px !important;
+        background: transparent !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    .fi-simple-main div:has(> .fi-input-wrp-suffix):focus-within {
+        border: 1px solid white !important;
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
+    }
+
+    .fi-simple-main input::placeholder {
+        color: rgba(255, 255, 255, 0.4) !important;
+    }
+
+    /* Checkbox remember me */
+    .fi-simple-main input[type="checkbox"] {
+        border: 1px solid rgba(255, 255, 255, 0.6) !important;
+        accent-color: white !important;
+        width: 16px !important;
+        height: 16px !important;
+        background: transparent !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* Icon mata - hapus border */
+    .fi-simple-main button:not([type="submit"]) {
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        outline: none !important;
+    }
+
+    /* Button Sign in */
+    .fi-simple-main button[type="submit"] {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        color: white !important;
+        border-radius: 8px !important;
+    }
+
+    .fi-simple-main button[type="submit"]:hover {
+        background: rgba(255, 255, 255, 0.25) !important;
+    }
+
+    .fi-simple-main input:-webkit-autofill,
+    .fi-simple-main input:-webkit-autofill:hover,
+    .fi-simple-main input:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0.01) inset !important;
+        -webkit-text-fill-color: white !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+</style> 
         ')
         : ''
 )
