@@ -39,14 +39,12 @@ class Dashboard extends Page
             default    => 'Selamat malam',
         };
 
-        // Query total siswa
         $studentQ = Student::query();
         if (!$this->isSuperAdmin) {
             $studentQ->where('kelas_id', $user->kelas_id);
         }
         $totalSiswa = $studentQ->count();
 
-        // Query absensi hari ini
         $absensiQ = Absensi::whereDate('waktu_ambil', today());
         if (!$this->isSuperAdmin) {
             $absensiQ->whereHas('student', fn($q) => $q->where('kelas_id', $user->kelas_id));
@@ -62,7 +60,6 @@ class Dashboard extends Page
             'tanggal'     => now()->translatedFormat('l, d F Y'),
         ];
 
-        // Data per kelas - pisah selectRaw, hindari konflik withCount + selectRaw('*')
         $kelasQuery = Kelas::select('kelas.id', 'kelas.nama_kelas')
             ->selectRaw('(
                 SELECT COUNT(students.id)
@@ -89,7 +86,6 @@ class Dashboard extends Page
                 'sudah' => (int) ($k->sudah ?? 0),
             ])->toArray();
 
-        // Tren 7 hari
         $this->trendData = collect(range(6, 0))->map(function ($ago) use ($user) {
             $date = today()->subDays($ago);
             $q    = Absensi::whereDate('waktu_ambil', $date);
