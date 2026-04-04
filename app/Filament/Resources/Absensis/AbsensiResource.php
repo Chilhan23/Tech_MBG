@@ -11,6 +11,7 @@ use App\Filament\Resources\Absensis\Schemas\AbsensiInfolist;
 use App\Filament\Resources\Absensis\Tables\AbsensisTable;
 use App\Models\Absensi;
 use BackedEnum;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -34,15 +35,14 @@ class AbsensiResource extends Resource
 
         // Admin kelas hanya lihat absensi siswa di kelasnya
         if ($user && $user->role === 'admin' && $user->kelas) {
-            $query->whereHas('student',
-                fn (Builder $q) => $q->where('kelas', $user->kelas)
+            $query->whereHas('student.kelas', // MASUK KE RELASI STUDENT LALU KELAS
+                fn (Builder $q) => $q->where('nama_kelas', $user->kelas)
             );
         }
 
         // Superadmin → tidak ada filter, lihat semua
         return $query;
     }
-
     public static function form(Schema $schema): Schema
     {
         return AbsensiForm::configure($schema);
@@ -50,7 +50,25 @@ class AbsensiResource extends Resource
 
     public static function infolist(Schema $schema): Schema
     {
-        return AbsensiInfolist::configure($schema);
+        return $schema
+            ->schema([
+                TextEntry::make('student.nisn')
+                    ->label('NISN'),
+
+                TextEntry::make('student.name')
+                    ->label('Nama Siswa'),
+
+                // UBAH INI: Tambahkan .nama_kelas di ujungnya
+                TextEntry::make('student.kelas.nama_kelas')
+                    ->label('Kelas'),
+
+                TextEntry::make('student.jurusan')
+                    ->label('Jurusan'),
+
+                TextEntry::make('created_at')
+                    ->label('Waktu Scan')
+                    ->dateTime('M d, Y H:i:s'),
+            ]);
     }
 
     public static function table(Table $table): Table

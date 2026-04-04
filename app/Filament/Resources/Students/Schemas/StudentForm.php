@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Filament\Resources\Students\Schemas;
 
+use App\Models\Kelas;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -9,47 +9,12 @@ use Illuminate\Support\Facades\Auth;
 
 class StudentForm
 {
-    const KELAS_OPTIONS = [
-        '10 BP'     => '10 BP',
-        '10 TJKT 1' => '10 TJKT 1',
-        '10 TJKT 2' => '10 TJKT 2',
-        '10 TJKT 3' => '10 TJKT 3',
-        '10 PPLG 1' => '10 PPLG 1',
-        '10 PPLG 2' => '10 PPLG 2',
-        '10 PPLG 3' => '10 PPLG 3',
-        '11 PF 1'   => '11 PF 1',
-        '11 PF 2'   => '11 PF 2',
-        '11 RPL 1'  => '11 RPL 1',
-        '11 RPL 2'  => '11 RPL 2',
-        '11 RPL 3'  => '11 RPL 3',
-        '11 TKJ 1'  => '11 TKJ 1',
-        '11 TKJ 2'  => '11 TKJ 2',
-        '11 TJA 1'  => '11 TJA 1',
-        '11 TJA 2'  => '11 TJA 2',
-        '12 PF 1'   => '12 PF 1',
-        '12 PF 2'   => '12 PF 2',
-        '12 RPL 1'  => '12 RPL 1',
-        '12 RPL 2'  => '12 RPL 2',
-        '12 RPL 3'  => '12 RPL 3',
-        '12 TKJ 1'  => '12 TKJ 1',
-        '12 TKJ 2'  => '12 TKJ 2',
-        '12 TJA'    => '12 TJA',
-    ];
-
     public static function configure(Schema $schema): Schema
     {
         $user         = Auth::user();
-        $isAdminKelas = $user && $user->role === 'admin' && $user->kelas;
-
-        // Admin kelas: option kelas hanya miliknya, otomatis terpilih
-        $kelasOptions = $isAdminKelas
-            ? [$user->kelas => $user->kelas]
-            : self::KELAS_OPTIONS;
-
-        $kelasDefault = $isAdminKelas ? $user->kelas : null;
+        $isAdminKelas = $user && $user->role === 'admin' && $user->kelas_id;
 
         return $schema->components([
-
             TextInput::make('nisn')
                 ->label('NISN')
                 ->required()
@@ -71,23 +36,25 @@ class StudentForm
                 ])
                 ->required(),
 
-            Select::make('kelas')
+            Select::make('kelas_id')
                 ->label('Kelas')
-                ->options($kelasOptions)
-                ->default($kelasDefault)
+                ->options(
+                    $isAdminKelas
+                        ? Kelas::where('id', $user->kelas_id)->pluck('nama_kelas', 'id')
+                        : Kelas::orderBy('nama_kelas')->pluck('nama_kelas', 'id')
+                )
+                ->default($isAdminKelas ? $user->kelas_id : null)
                 ->required()
-                // Kalau admin kelas, field ini disabled (tidak bisa ganti)
                 ->disabled($isAdminKelas)
-                ->dehydrated(true), // tetap tersimpan meski disabled
+                ->dehydrated(true),
 
             Select::make('jenis_kelamin')
                 ->label('Jenis Kelamin')
                 ->options([
-                    'Laki-laki'  => 'Laki-laki',
-                    'Perempuan'  => 'Perempuan',
+                    'Laki-laki' => 'Laki-laki',
+                    'Perempuan' => 'Perempuan',
                 ])
                 ->required(),
-
         ]);
     }
 }

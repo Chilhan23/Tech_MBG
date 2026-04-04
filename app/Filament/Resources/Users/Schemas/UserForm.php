@@ -2,42 +2,16 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use App\Models\Kelas; 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
+use Filament\Forms\Form; 
 
 class UserForm
 {
-    const KELAS_OPTIONS = [
-        '10 BP'     => '10 BP',
-        '10 TJKT 1' => '10 TJKT 1',
-        '10 TJKT 2' => '10 TJKT 2',
-        '10 TJKT 3' => '10 TJKT 3',
-        '10 PPLG 1' => '10 PPLG 1',
-        '10 PPLG 2' => '10 PPLG 2',
-        '10 PPLG 3' => '10 PPLG 3',
-        '11 PF 1'   => '11 PF 1',
-        '11 PF 2'   => '11 PF 2',
-        '11 RPL 1'  => '11 RPL 1',
-        '11 RPL 2'  => '11 RPL 2',
-        '11 RPL 3'  => '11 RPL 3',
-        '11 TKJ 1'  => '11 TKJ 1',
-        '11 TKJ 2'  => '11 TKJ 2',
-        '11 TJA 1'  => '11 TJA 1',
-        '11 TJA 2'  => '11 TJA 2',
-        '12 PF 1'   => '12 PF 1',
-        '12 PF 2'   => '12 PF 2',
-        '12 RPL 1'  => '12 RPL 1',
-        '12 RPL 2'  => '12 RPL 2',
-        '12 RPL 3'  => '12 RPL 3',
-        '12 TKJ 1'  => '12 TKJ 1',
-        '12 TKJ 2'  => '12 TKJ 2',
-        '12 TJA'    => '12 TJA',
-    ];
-
-    public static function configure(Schema $schema): Schema
+    public static function configure($form)
     {
-        return $schema->components([
+        return $form->schema([
 
             TextInput::make('name')
                 ->label('Nama')
@@ -71,7 +45,8 @@ class UserForm
 
             Select::make('kelas')
                 ->label('Kelas yang Dikelola')
-                ->options(self::KELAS_OPTIONS)
+                ->options(Kelas::all()->pluck('nama_kelas', 'nama_kelas')) 
+                ->searchable() 
                 ->placeholder('Pilih kelas...')
                 ->required(fn ($get) => $get('role') === 'admin')
                 ->visible(fn ($get) => $get('role') === 'admin')

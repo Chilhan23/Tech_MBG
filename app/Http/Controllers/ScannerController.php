@@ -13,7 +13,7 @@ class ScannerController extends Controller
             'nisn' => ['required', 'string'],
         ]);
 
-        $student = Student::where('nisn', $data['nisn'])->first();
+        $student = Student::with('kelas')->where('nisn', $data['nisn'])->first();
 
         if (! $student) {
             return response()->json([
@@ -34,7 +34,7 @@ class ScannerController extends Controller
                 'student' => [
                     'name'          => $student->name,
                     'nisn'          => $student->nisn,
-                    'kelas'         => $student->kelas,
+                    'kelas'         => $student->kelas(),
                     'jurusan'       => $student->jurusan,
                     'jenis_kelamin' => $student->jenis_kelamin,
                     'waktu'         => $absensiHariIni->created_at->format('H:i:s'),
@@ -53,7 +53,7 @@ class ScannerController extends Controller
             'student' => [
                 'name'          => $student->name,
                 'nisn'          => $student->nisn,
-                'kelas'         => $student->kelas,
+                'kelas'         => $student->kelas(),
                 'jurusan'       => $student->jurusan,
                 'jenis_kelamin' => $student->jenis_kelamin,
                 'waktu'         => $absensi->created_at->format('H:i:s'),

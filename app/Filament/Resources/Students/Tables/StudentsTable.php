@@ -2,75 +2,45 @@
 
 namespace App\Filament\Resources\Students\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use App\Models\Kelas;
+use App\Models\Student;
+use App\Imports\UserImport;
+use Maatwebsite\Excel\Facades\Excel;
+use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Filament\Forms\Components\FileUpload;
-use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\UserImport;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
-use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\HtmlString;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class StudentsTable
 {
-    const KELAS_OPTIONS = [
-        '10 BP'     => '10 BP',
-        '10 TJKT 1' => '10 TJKT 1',
-        '10 TJKT 2' => '10 TJKT 2',
-        '10 TJKT 3' => '10 TJKT 3',
-        '10 PPLG 1' => '10 PPLG 1',
-        '10 PPLG 2' => '10 PPLG 2',
-        '10 PPLG 3' => '10 PPLG 3',
-        '11 PF 1'   => '11 PF 1',
-        '11 PF 2'   => '11 PF 2',
-        '11 RPL 1'  => '11 RPL 1',
-        '11 RPL 2'  => '11 RPL 2',
-        '11 RPL 3'  => '11 RPL 3',
-        '11 TKJ 1'  => '11 TKJ 1',
-        '11 TKJ 2'  => '11 TKJ 2',
-        '11 TJA 1'  => '11 TJA 1',
-        '11 TJA 2'  => '11 TJA 2',
-        '12 PF 1'   => '12 PF 1',
-        '12 PF 2'   => '12 PF 2',
-        '12 RPL 1'  => '12 RPL 1',
-        '12 RPL 2'  => '12 RPL 2',
-        '12 RPL 3'  => '12 RPL 3',
-        '12 TKJ 1'  => '12 TKJ 1',
-        '12 TKJ 2'  => '12 TKJ 2',
-        '12 TJA'    => '12 TJA',
-    ];
-
-    private static function jurusanFromKelas(?string $kelas): ?string
-    {
-        if (!$kelas) return null;
-        $kelas = strtoupper($kelas);
-        if (str_contains($kelas, 'RPL') || str_contains($kelas, 'PPLG')) return 'Rekayasa Perangkat Lunak';
-        if (str_contains($kelas, 'TJKT') || str_contains($kelas, 'TKJ')) return 'Teknik Komputer dan Jaringan';
-        if (str_contains($kelas, 'TJA')) return 'Tehnik Jaringan Akses';
-        if (str_contains($kelas, 'BP') || str_contains($kelas, 'PF')) return 'Perfilman';
-        return null;
-    }
-
     public static function configure(Table $table): Table
     {
-        $user         = Auth::user();
-        $isAdmin      = $user && $user->role === 'admin' && $user->kelas;
+        $user    = Auth::user();
+        
+        // Cek admin berdasarkan role dan ketersediaan data kelas di user
+        $isAdmin = $user && $user->role === 'admin' && $user->kelas;
 
         $toolbarActions = [];
 
+        // --- Action Import Excel ---
         $toolbarActions[] = Action::make('import')
             ->label('Masukan Data Siswa/i Lewat Excel')
             ->icon('heroicon-o-arrow-up-tray')
             ->form([
                 FileUpload::make('file')
-                    ->label('Pastikan file Excel memiliki kolom: NISN, Nama, Jurusan, Kelas, Jenis Kelamin')
+                    ->label('Format: NISN, Nama, Jurusan, Kelas, Jenis Kelamin')
                     ->required()
                     ->acceptedFileTypes([
                         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -83,24 +53,25 @@ class StudentsTable
 
                 if (count($import->rejected) > 0) {
                     Notification::make()
-                        ->title('Beberapa baris ditolak (kelas tidak sesuai)')
-                        ->body(implode("\n", $import->rejected))
+                        ->title('Data ditolak (Kelas tidak sesuai)')
+                        ->body(implode(", ", $import->rejected))
                         ->danger()
                         ->send();
                 } elseif (count($import->duplicates) > 0) {
                     Notification::make()
-                        ->title('Duplicate ditemukan')
-                        ->body(implode("\n", $import->duplicates))
+                        ->title('NISN Duplikat Terdeteksi')
+                        ->body(implode(", ", $import->duplicates))
                         ->warning()
                         ->send();
                 } else {
                     Notification::make()
-                        ->title('Data berhasil diimpor')
+                        ->title('Data Berhasil Diimpor')
                         ->success()
                         ->send();
                 }
             });
 
+        // --- Bulk Actions ---
         $toolbarActions[] = BulkActionGroup::make([
             BulkAction::make('bulk_print_qr')
                 ->label('Cetak QR Terpilih')
@@ -113,8 +84,8 @@ class StudentsTable
             DeleteBulkAction::make(),
         ]);
 
+        // --- Filters ---
         $filters = [];
-
         if (!$isAdmin) {
             $filters[] = SelectFilter::make('jurusan')
                 ->label('Jurusan')
@@ -125,56 +96,69 @@ class StudentsTable
                     'Perfilman'                    => 'Perfilman',
                 ]);
 
-            $filters[] = SelectFilter::make('kelas')
+            $filters[] = SelectFilter::make('kelas_id')
                 ->label('Kelas')
-                ->options(self::KELAS_OPTIONS);
+                ->relationship('kelas', 'nama_kelas');
         }
 
         return $table
             ->columns([
-                TextColumn::make('nisn'),
-                TextColumn::make('name')->searchable(),
-                TextColumn::make('jurusan')->searchable(),
-                TextColumn::make('kelas')->searchable(),
-                TextColumn::make('jenis_kelamin')->searchable(),
+                TextColumn::make('nisn')
+                    ->copyable()
+                    ->sortable(),
+                TextColumn::make('name')
+                    ->label('Nama Siswa')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('jurusan')
+                    ->searchable(),
+                TextColumn::make('kelas.nama_kelas')
+                    ->label('Kelas')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('jenis_kelamin'),
                 TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters($filters)
-            ->modifyQueryUsing(function ($query) use ($isAdmin, $user) {
+            ->modifyQueryUsing(function (Builder $query) use ($isAdmin, $user) {
                 if ($isAdmin) {
-                    $query->where('kelas', $user->kelas);
+                    // Filter berdasarkan nama_kelas di tabel relasi kelas
+                    $query->whereHas('kelas', function ($q) use ($user) {
+                        $q->where('nama_kelas', $user->kelas);
+                    });
                 }
                 return $query;
             })
             ->recordActions([
+                // --- Modal QR Code ---
                 Action::make('qr_code')
                     ->label('QR Code')
                     ->icon('heroicon-o-qr-code')
                     ->modalHeading('QR Code Siswa')
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Tutup')
-                    ->modalContent(fn ($record) => new \Illuminate\Support\HtmlString('
-                        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
-                            <div style="padding:15px;background:white;border-radius:10px;margin-bottom:20px;">
-                                ' . \SimpleSoftwareIO\QrCode\Facades\QrCode::size(250)->generate($record->nisn) . '
+                    ->modalContent(fn ($record) => new HtmlString('
+                        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;">
+                            <div style="padding:15px;background:white;border-radius:10px;margin-bottom:20px;box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+                                ' . QrCode::size(250)->generate($record->nisn) . '
                             </div>
                             <h3 style="font-size:1.25rem;font-weight:bold;margin-bottom:5px;">' . $record->name . '</h3>
-                            <p style="color:gray;font-size:1rem;">' . $record->nisn . '</p>
-                            <p style="color:gray;font-size:0.9rem;">' . $record->kelas . ' ' . $record->jurusan . '</p>
+                            <p style="color:gray;font-size:1rem;margin-bottom:5px;">' . $record->nisn . '</p>
+                            <p style="color:gray;font-size:0.9rem;">' . ($record->kelas?->nama_kelas ?? '-') . ' — ' . $record->jurusan . '</p>
                         </div>
                     ')),
+                
+                // --- Print Kartu ---
                 Action::make('print_qr')
                     ->label('Cetak Kartu')
                     ->icon('heroicon-o-printer')
+                    ->color('info')
                     ->url(fn ($record): string => route('students.qr.print', ['student' => $record]))
                     ->openUrlInNewTab(),
+
                 ViewAction::make(),
                 EditAction::make(),
             ])

@@ -34,7 +34,9 @@ class StudentResource extends Resource
 
         // Admin kelas hanya lihat siswa kelasnya sendiri
         if ($user && $user->role === 'admin' && $user->kelas) {
-            $query->where('kelas', $user->kelas);
+           $query->whereHas('kelas', function ($q) use ($user) {
+                $q->where('nama_kelas', $user->kelas);
+            });
         }
 
         // Superadmin → tidak ada filter, lihat semua
