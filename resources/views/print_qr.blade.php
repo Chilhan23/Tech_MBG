@@ -256,7 +256,7 @@
                         </div>
                         <div class="info-row">
                             <label>Kelas / Jurusan</label>
-                            <span>{{ Str::after($student->kelas, ' ') }} / {{ $student->jurusan }}</span>
+                            <span>{{ Str::after($student->kelas->nama_kelas, ' ') }} / {{ $student->jurusan }}</span>
                         </div>
                     </div>
                 </div>
