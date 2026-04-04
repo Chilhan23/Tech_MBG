@@ -17,6 +17,20 @@
             margin-bottom: 15px;
         }
 
+        .kop-logo {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .kop-text {
+            text-align: center;
+        }
+
         .kop h1 {
             font-size: 16px;
             margin: 0;
