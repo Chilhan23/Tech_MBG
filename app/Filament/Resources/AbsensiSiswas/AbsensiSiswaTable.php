@@ -162,7 +162,6 @@ class AbsensiSiswaTable
                     $query->whereDate('waktu_ambil', today());
                 }
             })
-            ->recordActions([ViewAction::make()])
             ->toolbarActions($toolbarActions)
             ->defaultSort('waktu_ambil', 'desc');
     }
