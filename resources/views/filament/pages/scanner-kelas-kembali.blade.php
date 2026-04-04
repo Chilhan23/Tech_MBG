@@ -3,8 +3,34 @@
 <style>
     /* copy semua CSS dari scanner siswa, ganti: */
     .scanner-wrap {
-        --c-accent:  #7c3aed;
-        --c-accent-2: #6d28d9;
+        --c-bg:         #f8f7f5;
+        --c-surface:    #ffffff;
+        --c-surface-2:  #f2f1ef;
+        --c-border:     #e8e6e2;
+        --c-border-2:   #d4d0ca;
+        --c-text:       #1a1916;
+        --c-text-2:     #6b6860;
+        --c-text-3:     #9b9890;
+        --c-accent:     #7c3aed;
+        --c-accent-2:   #6d28d9;
+        --c-green:      #16a34a;
+        --c-green-bg:   #f0fdf4;
+        --c-green-bdr:  #bbf7d0;
+        --c-amber:      #d97706;
+        --c-amber-bg:   #fffbeb;
+        --c-amber-bdr:  #fde68a;
+        --c-red:        #dc2626;
+        --c-red-bg:     #fef2f2;
+        --c-red-bdr:    #fecaca;
+        --c-blue-bg:    #eff6ff;
+        --c-blue-bdr:   #bfdbfe;
+        --radius:       14px;
+        --radius-sm:    8px;
+        --shadow-sm:    0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+        --shadow-md:    0 4px 12px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.04);
+        --shadow-lg:    0 12px 32px rgba(0,0,0,.1), 0 4px 8px rgba(0,0,0,.06);
+        --font:         'Plus Jakarta Sans', system-ui, sans-serif;
+        --font-mono:    'JetBrains Mono', monospace;
     }
     .dark .scanner-wrap {
             --c-bg:         #111110;
