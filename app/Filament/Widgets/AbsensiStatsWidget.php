@@ -13,30 +13,30 @@ class AbsensiStatsWidget extends BaseWidget
     protected function getStats(): array
     {
         $user = Auth::user();
+        $isAdminKelas = $user && $user->role === 'admin' && $user->kelas;
 
-        // Query siswa — filter kelas kalau admin
+        // 1. Query Total Siswa — Filter lewat relasi kelas
         $studentQuery = Student::query();
-        if ($user && $user->role === 'admin' && $user->kelas) {
-            $studentQuery->where('kelas', $user->kelas);
+        if ($isAdminKelas) {
+            $studentQuery->whereHas('kelas', function ($q) use ($user) {
+                $q->where('nama_kelas', $user->kelas);
+            });
         }
-
         $totalSiswa = $studentQuery->count();
 
-        // Query absensi — filter kelas kalau admin
+        // 2. Query Absensi Hari Ini — Filter lewat relasi berantai (Absensi -> Student -> Kelas)
         $absensiQuery = Absensi::whereDate('created_at', today());
-        if ($user && $user->role === 'admin' && $user->kelas) {
-            $absensiQuery->whereHas('student',
-                fn ($q) => $q->where('kelas', $user->kelas)
-            );
+        if ($isAdminKelas) {
+            $absensiQuery->whereHas('student.kelas', function ($q) use ($user) {
+                $q->where('nama_kelas', $user->kelas);
+            });
         }
 
         $sudahAmbil = $absensiQuery->distinct('student_id')->count();
-        $belumAmbil = $totalSiswa - $sudahAmbil;
+        $belumAmbil = max(0, $totalSiswa - $sudahAmbil); // Pakai max(0) biar gak minus kalau ada anomali data
 
-        // Label scope — superadmin lihat "semua", admin lihat kelasnya
-        $scope = ($user && $user->role === 'admin' && $user->kelas)
-            ? 'Kelas ' . $user->kelas
-            : 'Semua Kelas';
+        // 3. Label Scope
+        $scope = $isAdminKelas ? 'Kelas ' . $user->kelas : 'Semua Kelas';
 
         return [
             Stat::make('Total Siswa', $totalSiswa)
@@ -45,14 +45,14 @@ class AbsensiStatsWidget extends BaseWidget
                 ->color('info'),
 
             Stat::make('Sudah Ambil MBG Hari Ini', $sudahAmbil)
-                ->description('Per ' . today()->format('d/m/Y'))
+                ->description('Per ' . today()->translatedFormat('d F Y'))
                 ->icon('heroicon-o-check-circle')
                 ->color('success'),
 
             Stat::make('Belum Ambil MBG', $belumAmbil)
-                ->description('Siswa yang belum absen hari ini')
+                ->description('Siswa belum scan hari ini')
                 ->icon('heroicon-o-x-circle')
-                ->color('danger'),
+                ->color($belumAmbil > 0 ? 'danger' : 'success'),
         ];
     }
 }

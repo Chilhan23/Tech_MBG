@@ -2,57 +2,71 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Absensi;
+use App\Models\Kelas;
 use App\Models\Student;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AbsensiPerKelasWidget extends BaseWidget
 {
     protected static ?string $heading = 'Rekap Absensi Per Kelas Hari Ini';
     protected int | string | array $columnSpan = 'full';
 
+    // Sekarang record-nya adalah Model Kelas, jadi key-nya pakai ID
     public function getTableRecordKey($record): string
     {
-        return $record->kelas;
+        return (string) $record->id;
     }
 
     public function table(Table $table): Table
     {
         $user = Auth::user();
 
-        $query = Student::query()
-            ->select('kelas')
-            ->selectRaw('COUNT(*) as total_siswa')
-            ->selectRaw('SUM(CASE WHEN EXISTS (
-                SELECT 1 FROM absensis
-                WHERE absensis.student_id = students.id
+        // Kita mulai query dari Model Kelas
+        $query = Kelas::query()
+            ->select('kelas.id', 'kelas.nama_kelas')
+            // Hitung total siswa di kelas tersebut
+            ->withCount('students as total_siswa')
+            // Hitung siswa yang SUDAH absensi hari ini menggunakan subquery
+            ->selectRaw('(
+                SELECT COUNT(*) 
+                FROM absensis 
+                JOIN students ON absensis.student_id = students.id 
+                WHERE students.kelas_id = kelas.id 
                 AND DATE(absensis.created_at) = CURDATE()
-            ) THEN 1 ELSE 0 END) as sudah_ambil')
-            ->groupBy('kelas')
-            ->orderBy('kelas');
+            ) as sudah_ambil')
+            ->orderBy('nama_kelas');
 
         // Admin kelas hanya lihat kelasnya sendiri
         if ($user && $user->role === 'admin' && $user->kelas) {
-            $query->where('kelas', $user->kelas);
+            $query->where('nama_kelas', $user->kelas);
         }
 
         return $table
             ->query($query)
             ->columns([
-                TextColumn::make('kelas')
-                    ->label('Kelas'),
+                TextColumn::make('nama_kelas')
+                    ->label('Kelas')
+                    ->sortable(),
+
                 TextColumn::make('total_siswa')
-                    ->label('Total Siswa'),
+                    ->label('Total Siswa')
+                    ->alignCenter(),
+
                 TextColumn::make('sudah_ambil')
                     ->label('Sudah Ambil MBG')
-                    ->color('success'),
+                    ->color('success')
+                    ->alignCenter(),
+
                 TextColumn::make('belum_ambil')
                     ->label('Belum Ambil')
+                    // Hitung selisih: Total Siswa - Sudah Ambil
                     ->getStateUsing(fn ($record) => $record->total_siswa - $record->sudah_ambil)
-                    ->color(fn ($state) => $state > 0 ? 'danger' : 'success'),
+                    ->color(fn ($state) => $state > 0 ? 'danger' : 'success')
+                    ->alignCenter(),
             ]);
     }
 }

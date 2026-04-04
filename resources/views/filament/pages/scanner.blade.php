@@ -756,7 +756,7 @@
                 html5QrCode = new Html5Qrcode('reader');
                 html5QrCode.start(
                     { facingMode: "environment" }, // ← ini cara paksa kamera belakang
-                    { fps: 10, qrbox: { width: 800, height: 600 } },
+                    { fps: 10, qrbox: { width: 220, height: 220 } },
                     onScanSuccess, () => {}
                 )
                 .then(() => setStatus('Arahkan kamera ke QR Code siswa.'))

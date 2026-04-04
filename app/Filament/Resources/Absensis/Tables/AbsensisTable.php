@@ -13,44 +13,18 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Student;
+use App\Models\Kelas; // Tambahkan ini
 use Filament\Actions\Action;
 use Illuminate\Support\Facades\Auth;
 
 class AbsensisTable
 {
-    const KELAS_OPTIONS = [
-        '10 BP'     => '10 BP',
-        '10 TJKT 1' => '10 TJKT 1',
-        '10 TJKT 2' => '10 TJKT 2',
-        '10 TJKT 3' => '10 TJKT 3',
-        '10 PPLG 1' => '10 PPLG 1',
-        '10 PPLG 2' => '10 PPLG 2',
-        '10 PPLG 3' => '10 PPLG 3',
-        '11 PF 1'   => '11 PF 1',
-        '11 PF 2'   => '11 PF 2',
-        '11 RPL 1'  => '11 RPL 1',
-        '11 RPL 2'  => '11 RPL 2',
-        '11 RPL 3'  => '11 RPL 3',
-        '11 TKJ 1'  => '11 TKJ 1',
-        '11 TKJ 2'  => '11 TKJ 2',
-        '11 TJA 1'  => '11 TJA 1',
-        '11 TJA 2'  => '11 TJA 2',
-        '12 PF 1'   => '12 PF 1',
-        '12 PF 2'   => '12 PF 2',
-        '12 RPL 1'  => '12 RPL 1',
-        '12 RPL 2'  => '12 RPL 2',
-        '12 RPL 3'  => '12 RPL 3',
-        '12 TKJ 1'  => '12 TKJ 1',
-        '12 TKJ 2'  => '12 TKJ 2',
-        '12 TJA'    => '12 TJA',
-    ];
-
     public static function configure(Table $table): Table
     {
         $user    = Auth::user();
         $isAdmin = $user && $user->role === 'admin' && $user->kelas;
 
-        // Filter tanggal — tampil untuk semua role
+        // Filter tanggal
         $filterTanggal = Filter::make('created_at')
             ->label('Tanggal')
             ->form([
@@ -60,57 +34,50 @@ class AbsensisTable
             ->query(function (Builder $query, array $data): Builder {
                 return $query
                     ->when($data['created_from'],
-                        fn (Builder $query, $date) =>
-                            $query->whereDate('created_at', '>=', $date))
+                        fn (Builder $query, $date) => $query->whereDate('created_at', '>=', $date))
                     ->when($data['created_until'],
-                        fn (Builder $query, $date) =>
-                            $query->whereDate('created_at', '<=', $date));
+                        fn (Builder $query, $date) => $query->whereDate('created_at', '<=', $date));
             });
 
-        // Filters superadmin — tambah tingkat, jurusan, kelas
         $filters = [];
 
         if (!$isAdmin) {
+            // Filter Tingkat - Cari di nama_kelas tabel kelas
             $filters[] = SelectFilter::make('tingkat')
                 ->label('Tingkat Kelas')
                 ->options([
-                    '10' => 'Kelas 10 (Semua)',
-                    '11' => 'Kelas 11 (Semua)',
-                    '12' => 'Kelas 12 (Semua)',
+                    '10' => 'Kelas 10',
+                    '11' => 'Kelas 11',
+                    '12' => 'Kelas 12',
                 ])
                 ->query(function (Builder $query, array $data): Builder {
                     return $query->when($data['value'],
                         fn (Builder $query, $value) =>
-                            $query->whereHas('student',
-                                fn ($q) => $q->where('kelas', 'like', $value . ' %')
+                            $query->whereHas('student.kelas', // Ubah ini
+                                fn ($q) => $q->where('nama_kelas', 'like', $value . ' %')
                             )
                     );
                 });
 
             $filters[] = SelectFilter::make('jurusan')
                 ->label('Jurusan')
-                ->options(fn () => Student::query()
-                    ->distinct()
-                    ->orderBy('jurusan')
-                    ->pluck('jurusan', 'jurusan')
-                    ->toArray()
-                )
+                ->options(fn () => Student::query()->distinct()->orderBy('jurusan')->pluck('jurusan', 'jurusan')->toArray())
                 ->query(function (Builder $query, array $data): Builder {
                     return $query->when($data['value'],
                         fn (Builder $query, $value) =>
-                            $query->whereHas('student',
-                                fn ($q) => $q->where('jurusan', $value))
+                            $query->whereHas('student', fn ($q) => $q->where('jurusan', $value))
                     );
                 });
 
+            // Filter Kelas Spesifik - Ambil dari database, jangan hardcode
             $filters[] = SelectFilter::make('kelas')
                 ->label('Kelas Spesifik')
-                ->options(self::KELAS_OPTIONS)
+                ->options(fn () => Kelas::pluck('nama_kelas', 'nama_kelas')->toArray())
                 ->query(function (Builder $query, array $data): Builder {
                     return $query->when($data['value'],
                         fn (Builder $query, $value) =>
-                            $query->whereHas('student',
-                                fn ($q) => $q->where('kelas', $value))
+                            $query->whereHas('student.kelas', // Ubah ini
+                                fn ($q) => $q->where('nama_kelas', $value))
                     );
                 });
         }
@@ -119,36 +86,24 @@ class AbsensisTable
 
         return $table
             ->columns([
-                TextColumn::make('student.name')
-                    ->label('Nama Siswa')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('student.nisn')
-                    ->label('NISN')
-                    ->sortable(),
-                TextColumn::make('student.kelas')
-                    ->label('Kelas')
-                    ->sortable(),
-                TextColumn::make('student.jurusan')
-                    ->label('Jurusan')
-                    ->sortable(),
-                TextColumn::make('created_at')
-                    ->label('Waktu Ambil MBG')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
+                TextColumn::make('student.name')->label('Nama Siswa')->searchable()->sortable(),
+                TextColumn::make('student.nisn')->label('NISN')->sortable(),
+                // Ini sudah benar pakai dot notation
+                TextColumn::make('student.kelas.nama_kelas')->label('Kelas')->sortable(),
+                TextColumn::make('student.jurusan')->label('Jurusan')->sortable(),
+                TextColumn::make('created_at')->label('Waktu Ambil MBG')->dateTime('d/m/Y H:i')->sortable(),
             ])
             ->filters($filters)
             ->modifyQueryUsing(function ($query) use ($isAdmin, $user) {
                 if ($isAdmin) {
-                    $query->whereHas('student',
-                        fn ($q) => $q->where('kelas', $user->kelas)
+                    // ERROR DI SINI TADI: Harus tembus ke relasi kelas
+                    $query->whereHas('student.kelas',
+                        fn ($q) => $q->where('nama_kelas', $user->kelas)
                     );
                 }
                 return $query;
             })
-            ->recordActions([
-                ViewAction::make(),
-            ])
+            ->recordActions([ViewAction::make()])
             ->toolbarActions([
                 Action::make('export_pdf')
                     ->label('Export PDF')
@@ -156,37 +111,18 @@ class AbsensisTable
                     ->color('danger')
                     ->form([
                         Select::make('tingkat')
-                            ->label('Tingkat Kelas')
-                            ->placeholder('— Pilih tingkat —')
-                            ->options([
-                                '10' => 'Kelas 10 (semua kelas 10)',
-                                '11' => 'Kelas 11 (semua kelas 11)',
-                                '12' => 'Kelas 12 (semua kelas 12)',
-                            ])
+                            ->options(['10' => 'Kelas 10', '11' => 'Kelas 11', '12' => 'Kelas 12'])
                             ->live()
-                            ->afterStateUpdated(fn (callable $set) => $set('kelas', null)),
-
+                            ->afterStateUpdated(fn ($set) => $set('kelas', null)),
                         Select::make('kelas')
                             ->label('Atau Kelas Spesifik')
-                            ->placeholder('— Atau pilih kelas tertentu —')
-                            ->options(self::KELAS_OPTIONS)
+                            // Ambil dari database biar konsisten
+                            ->options(fn () => Kelas::pluck('nama_kelas', 'nama_kelas')->toArray())
                             ->live()
-                            ->afterStateUpdated(fn (callable $set) => $set('tingkat', null)),
-
+                            ->afterStateUpdated(fn ($set) => $set('tingkat', null)),
                         Select::make('jurusan')
-                            ->label('Jurusan (opsional)')
-                            ->placeholder('Semua Jurusan')
-                            ->options(fn () => Student::query()
-                                ->distinct()
-                                ->orderBy('jurusan')
-                                ->pluck('jurusan', 'jurusan')
-                                ->toArray()
-                            ),
-
-                        DatePicker::make('tanggal')
-                            ->label('Tanggal')
-                            ->default(now()->toDateString())
-                            ->required(),
+                            ->options(fn () => Student::query()->distinct()->pluck('jurusan', 'jurusan')->toArray()),
+                        DatePicker::make('tanggal')->default(now()->toDateString())->required(),
                     ])
                     ->action(function (array $data) {
                         $params = http_build_query(array_filter([
@@ -195,13 +131,9 @@ class AbsensisTable
                             'jurusan' => $data['jurusan'] ?? '',
                             'tanggal' => $data['tanggal'] ?? now()->toDateString(),
                         ]));
-
                         redirect()->away(route('absensi.export-pdf') . '?' . $params);
                     }),
-
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([DeleteBulkAction::make()]),
             ]);
     }
 }
