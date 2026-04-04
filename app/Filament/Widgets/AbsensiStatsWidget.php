@@ -13,13 +13,13 @@ class AbsensiStatsWidget extends BaseWidget
     protected function getStats(): array
     {
         $user = Auth::user();
-        $isAdminKelas = $user && $user->role === 'admin' && $user->kelas;
+        $isAdminKelas = $user && $user->role === 'admin' && $user->kelas->nama_kelas;
 
         // 1. Query Total Siswa — Filter lewat relasi kelas
         $studentQuery = Student::query();
         if ($isAdminKelas) {
             $studentQuery->whereHas('kelas', function ($q) use ($user) {
-                $q->where('nama_kelas', $user->kelas);
+                $q->where('id', $user->kelas_id);
             });
         }
         $totalSiswa = $studentQuery->count();
@@ -28,7 +28,7 @@ class AbsensiStatsWidget extends BaseWidget
         $absensiQuery = Absensi::whereDate('created_at', today());
         if ($isAdminKelas) {
             $absensiQuery->whereHas('student.kelas', function ($q) use ($user) {
-                $q->where('nama_kelas', $user->kelas);
+                $q->where('id', $user->kelas_id);
             });
         }
 
@@ -36,7 +36,7 @@ class AbsensiStatsWidget extends BaseWidget
         $belumAmbil = max(0, $totalSiswa - $sudahAmbil); // Pakai max(0) biar gak minus kalau ada anomali data
 
         // 3. Label Scope
-        $scope = $isAdminKelas ? 'Kelas ' . $user->kelas : 'Semua Kelas';
+        $scope = $isAdminKelas ? 'Kelas ' . $user->kelas->nama_kelas : 'Semua Kelas';
 
         return [
             Stat::make('Total Siswa', $totalSiswa)

@@ -14,8 +14,6 @@ class AbsensiPerKelasWidget extends BaseWidget
 {
     protected static ?string $heading = 'Rekap Absensi Per Kelas Hari Ini';
     protected int | string | array $columnSpan = 'full';
-
-    // Sekarang record-nya adalah Model Kelas, jadi key-nya pakai ID
     public function getTableRecordKey($record): string
     {
         return (string) $record->id;
@@ -36,13 +34,13 @@ class AbsensiPerKelasWidget extends BaseWidget
                 FROM absensis 
                 JOIN students ON absensis.student_id = students.id 
                 WHERE students.kelas_id = kelas.id 
-                AND DATE(absensis.created_at) = CURDATE()
+                AND DATE(absensis.waktu_ambil) = CURDATE()
             ) as sudah_ambil')
             ->orderBy('nama_kelas');
 
         // Admin kelas hanya lihat kelasnya sendiri
         if ($user && $user->role === 'admin' && $user->kelas) {
-            $query->where('nama_kelas', $user->kelas);
+            $query->where('id', $user->kelas_id);
         }
 
         return $table
