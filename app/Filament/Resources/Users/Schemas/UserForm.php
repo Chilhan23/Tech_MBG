@@ -43,9 +43,9 @@ class UserForm
                 ->required()
                 ->live(),
 
-            Select::make('kelas')
+            Select::make('kelas_id')
                 ->label('Kelas yang Dikelola')
-                ->options(Kelas::all()->pluck('nama_kelas', 'nama_kelas')) 
+                ->options(Kelas::all()->pluck('nama_kelas', 'id')->toArray()) 
                 ->searchable() 
                 ->placeholder('Pilih kelas...')
                 ->required(fn ($get) => $get('role') === 'admin')

@@ -3,132 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body {
-            font-family: Arial, sans-serif;
-            font-size: 11px;
-            color: #111;
-            padding: 20px;
+            font-family: "Times New Roman", serif;
+            font-size: 12px;
+            color: #000;
+            margin: 25px;
         }
 
-        .header {
+        .kop {
             text-align: center;
-            margin-bottom: 18px;
-            border-bottom: 2px solid #1d4ed8;
-            padding-bottom: 12px;
+            border-bottom: 3px double #000;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
         }
-        .header h1 {
+
+        .kop h1 {
             font-size: 16px;
-            font-weight: bold;
-            color: #1d4ed8;
-            margin-bottom: 4px;
+            margin: 0;
+            text-transform: uppercase;
         }
-        .header p { font-size: 11px; color: #555; }
+
+        .kop p {
+            margin: 2px 0;
+            font-size: 12px;
+        }
+
+        .judul {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .judul h2 {
+            font-size: 14px;
+            text-decoration: underline;
+            margin-bottom: 5px;
+        }
 
         .meta {
-            margin-bottom: 14px;
-            font-size: 10.5px;
-            color: #374151;
-            display: flex;
-            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 12px;
         }
-        .meta strong { color: #111; }
 
-        table {
+        .meta table {
+            width: 100%;
+        }
+
+        .meta td {
+            padding: 2px 0;
+        }
+
+        table.data {
             width: 100%;
             border-collapse: collapse;
-            font-size: 10.5px;
-        }
-        thead tr { background: #1d4ed8; color: white; }
-        thead th { padding: 8px 6px; text-align: left; font-weight: 600; }
-        tbody tr:nth-child(even) { background: #f1f5f9; }
-        tbody tr:nth-child(odd)  { background: #ffffff; }
-        tbody td {
-            padding: 7px 6px;
-            border-bottom: 1px solid #e2e8f0;
-            vertical-align: middle;
+            margin-top: 10px;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 999px;
-            font-size: 10px;
-            font-weight: 600;
+        table.data th, table.data td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: center;
         }
-        .badge-success { background: #dcfce7; color: #166534; }
-        .badge-danger  { background: #fee2e2; color: #991b1b; }
 
-        .summary {
-            margin-top: 14px;
-            padding: 8px 12px;
-            background: #eff6ff;
-            border-left: 3px solid #2563eb;
-            border-radius: 4px;
-            font-size: 11px;
+        table.data th {
+            background-color: #e5e7eb;
+            font-weight: bold;
+        }
+
+        table.data td.text-left {
+            text-align: left;
         }
 
         .footer {
-            margin-top: 14px;
-            font-size: 10px;
-            color: #9ca3af;
-            text-align: right;
+            margin-top: 30px;
+            width: 100%;
+        }
+
+        .ttd {
+            width: 200px;
+            text-align: center;
+            float: right;
+        }
+
+        .ttd .nama {
+            margin-top: 60px;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        .ringkasan {
+            margin-top: 15px;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>Laporan Absensi MBG</h1>
-    <p>Program Makan Bergizi Gratis &mdash; Data Pengambilan Makanan</p>
+<div class="kop">
+    <h1>PEMERINTAH KOTA / KABUPATEN</h1>
+    <p>DINAS PENDIDIKAN</p>
+    <p>SMK NEGERI XXXXX</p>
+    <p>Alamat Sekolah, Kota, Provinsi</p>
+</div>
+
+<div class="judul">
+    <h2>LAPORAN ABSENSI SISWA</h2>
+    <p>PROGRAM MAKAN BERGIZI GRATIS (MBG)</p>
 </div>
 
 <div class="meta">
-    <div>
-        <strong>Tanggal:</strong> {{ $labelTanggal }}
-        &nbsp;&nbsp;
-        <strong>Kelas:</strong> {{ $labelScope }}
-        &nbsp;&nbsp;
-        <strong>Jurusan:</strong> {{ $labelJurusan }}
-    </div>
-    <div>Dicetak: {{ now()->format('d/m/Y H:i') }}</div>
+    <table>
+        <tr>
+            <td width="50%">
+                Tanggal : {{ $labelTanggal }} <br>
+                Kelas : {{ $labelScope }} <br>
+                Jurusan : {{ $labelJurusan }}
+            </td>
+            <td width="50%" style="text-align:right;">
+                Dicetak : {{ now()->format('d/m/Y H:i') }}
+            </td>
+        </tr>
+    </table>
 </div>
 
-<table>
+<table class="data">
     <thead>
         <tr>
-            <th style="width:4%">No</th>
-            <th style="width:26%">Nama Siswa</th>
-            <th style="width:14%">NISN</th>
-            <th style="width:10%">Kelas</th>
-            <th style="width:24%">Jurusan</th>
-            <th style="width:10%">Jam Ambil</th>
-            <th style="width:12%">Status</th>
+            <th>No</th>
+            <th>Nama Siswa</th>
+            <th>NISN</th>
+            <th>Kelas</th>
+            <th>Jurusan</th>
+            <th>Jam Ambil</th>
+            <th>Jam Kembali</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
         @forelse ($rows as $i => $row)
             <tr>
                 <td>{{ $i + 1 }}</td>
-                <td>{{ $row['name'] }}</td>
-                <td style="font-family: monospace;">{{ $row['nisn'] }}</td>
+                <td class="text-left">{{ $row['name'] }}</td>
+                <td>{{ $row['nisn'] }}</td>
                 <td>{{ $row['kelas'] }}</td>
                 <td>{{ $row['jurusan'] }}</td>
-                <td>{{ $row['waktu'] ?? '-' }}</td>
+                <td>{{ $row['waktu_ambil'] ?? '-' }}</td>
+                <td>{{ $row['waktu_kembali'] ?? '-' }}</td>
                 <td>
-                    @if ($row['sudah_ambil'])
-                        <span class="badge badge-success">Sudah Ambil</span>
+                    @if ($row['sudah_ambil'] && $row['waktu_kembali'])
+                        Kembali
+                    @elseif ($row['sudah_ambil'])
+                        Belum Kembali
                     @else
-                        <span class="badge badge-danger">Belum Ambil</span>
+                        Belum Ambil
                     @endif
                 </td>
             </tr>
         @empty
             <tr>
-                <td colspan="7" style="text-align:center; padding:20px; color:#9ca3af;">
-                    Tidak ada data siswa.
-                </td>
+                <td colspan="8">Tidak ada data</td>
             </tr>
         @endforelse
     </tbody>
@@ -136,23 +168,28 @@
 
 @php
     $sudah = collect($rows)->where('sudah_ambil', true)->count();
+    $kembali = collect($rows)->whereNotNull('waktu_kembali')->count();
     $belum = collect($rows)->where('sudah_ambil', false)->count();
     $total = count($rows);
 @endphp
 
-<div class="summary">
-    <strong>Ringkasan:</strong>
-    Total {{ $total }} siswa &nbsp;&mdash;&nbsp;
-    <span style="color:#166534"><strong>✓ Sudah ambil: {{ $sudah }}</strong></span>
-    &nbsp;&mdash;&nbsp;
-    <span style="color:#991b1b"><strong>✗ Belum ambil: {{ $belum }}</strong></span>
-    @if ($total > 0)
-        &nbsp;&mdash;&nbsp; <strong>{{ round(($sudah / $total) * 100) }}%</strong> hadir
-    @endif
+<div class="ringkasan">
+    <strong>Ringkasan:</strong><br>
+    Total Siswa: {{ $total }} <br>
+    Sudah Ambil: {{ $sudah }} <br>
+    Sudah Kembali: {{ $kembali }} <br>
+    Belum Ambil: {{ $belum }}
 </div>
 
 <div class="footer">
-    Digenerate otomatis oleh Sistem MBG &bull; {{ now()->format('d/m/Y H:i:s') }}
+    <div class="ttd">
+        <p>{{ now()->translatedFormat('d F Y') }}</p>
+        <p>Petugas,</p>
+
+        <div class="nama">
+            (............................)
+        </div>
+    </div>
 </div>
 
 </body>

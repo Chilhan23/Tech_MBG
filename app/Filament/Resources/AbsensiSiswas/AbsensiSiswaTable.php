@@ -108,6 +108,27 @@ class AbsensiSiswaTable
                 });
         }
 
+        if ($isAdmin) {
+            $toolbarActions[] = Action::make('export_pdf_admin')
+                ->label('Export PDF Kelas')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('danger')
+                ->form([
+                    DatePicker::make('tanggal')
+                        ->label('Pilih Tanggal')
+                        ->default(now()->toDateString())
+                        ->required(),
+                ])
+                ->action(function (array $data) use ($user) {
+                    $namaKelas = Kelas::find($user->kelas_id)?->nama_kelas;
+                    $params = http_build_query([
+                        'kelas'   => $namaKelas,
+                        'tanggal' => $data['tanggal'],
+                    ]);
+                    return redirect()->away(route('absensi.export-pdf') . '?' . $params);
+                });
+        }
+
         $toolbarActions[] = BulkActionGroup::make([
             DeleteBulkAction::make(),
         ]);
@@ -127,7 +148,7 @@ class AbsensiSiswaTable
                 TextColumn::make('waktu_kembali')
                     ->label('Waktu Kembali')->dateTime('d/m/Y H:i')
                     ->placeholder('Belum kembali')
-                    ->sortable()->visible($isSuperAdmin),
+                    ->sortable()->visible($isAdmin || $isSuperAdmin),
             ])
             ->filters($filters)
             ->modifyQueryUsing(function (Builder $query, Livewire $livewire) use ($isAdmin, $user) {
@@ -145,4 +166,6 @@ class AbsensiSiswaTable
             ->toolbarActions($toolbarActions)
             ->defaultSort('waktu_ambil', 'desc');
     }
+
+    
 }

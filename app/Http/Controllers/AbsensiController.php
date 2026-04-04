@@ -10,69 +10,63 @@ use Carbon\Carbon;
 
 class AbsensiController extends Controller
 {
-    /**
-     * Export absensi ke PDF dengan deteksi jurusan otomatis.
-     */
     public function exportPdf(Request $request)
     {
         $tingkat   = $request->query('tingkat', '');
-        $kelasNama = $request->query('kelas', ''); // String nama kelas dari filter
+        $kelasNama = $request->query('kelas', '');
         $jurusan   = $request->query('jurusan', '');
         $tanggal   = $request->query('tanggal', now()->toDateString());
 
-        // --- 1. Query Data Siswa (Eager Loading Relasi Kelas) ---
+        // --- 1. Query Students ---
         $studentsQuery = Student::with('kelas');
 
-        // Filter: Kelas Spesifik (lewat tabel relasi 'kelas')
         if ($kelasNama) {
             $studentsQuery->whereHas('kelas', function ($q) use ($kelasNama) {
                 $q->where('nama_kelas', $kelasNama);
             });
-        } 
-        // Filter: Tingkat (misal '10', '11', '12')
-        elseif ($tingkat) {
+        } elseif ($tingkat) {
             $studentsQuery->whereHas('kelas', function ($q) use ($tingkat) {
                 $q->where('nama_kelas', 'like', $tingkat . ' %');
             });
         }
 
-        // Filter: Jurusan (berdasarkan kolom jurusan di tabel students)
         if ($jurusan) {
             $studentsQuery->where('jurusan', $jurusan);
         }
 
-        // Ambil data & urutkan berdasarkan Nama Kelas (relasi) lalu Nama Siswa
-        $students = $studentsQuery->get()->sortBy(function($student) {
-            return ($student->kelas->nama_kelas ?? '') . $student->name;
+        $students = $studentsQuery->get()->sortBy(function ($student) {
+            return (optional($student->kelas)->nama_kelas ?? '') . $student->name;
         });
 
-        // --- 2. Ambil Data Absensi pada Tanggal Terpilih ---
+        // --- 2. Query Absensi (FIX DISINI) ---
         $absensiMap = Absensi::whereIn('student_id', $students->pluck('id'))
-            ->whereDate('created_at', $tanggal)
+            ->whereDate('waktu_ambil', $tanggal) // ✅ FIX
             ->get()
             ->keyBy('student_id');
 
-        // --- 3. Mapping Data untuk Baris Tabel PDF ---
+        // --- 3. Mapping ---
         $rows = $students->map(function ($student) use ($absensiMap) {
             $absensi = $absensiMap->get($student->id);
+
             return [
                 'name'        => $student->name,
                 'nisn'        => $student->nisn,
-                'kelas'       => $student->kelas ? $student->kelas->nama_kelas : '-', 
+                'kelas'       => optional($student->kelas)->nama_kelas ?? '-',
                 'jurusan'     => $student->jurusan,
-                'waktu'       => $absensi ? $absensi->created_at->format('H:i') : null,
+                'waktu_ambil'   => $absensi ? $absensi->waktu_ambil?->format('H:i') : null,
+                'waktu_kembali' => $absensi && $absensi->waktu_kembali
+                    ? $absensi->waktu_kembali->format('H:i')
+                    : null,
                 'sudah_ambil' => $absensi !== null,
             ];
         });
 
-        // --- 4. Logika Penentuan Label Jurusan Otomatis (Mapping) ---
+        // --- 4. Label Jurusan ---
         $labelJurusan = 'Semua Jurusan';
 
         if ($jurusan) {
-            // Jika user pilih filter jurusan secara manual di UI
             $labelJurusan = $jurusan;
         } elseif ($kelasNama) {
-            // Deteksi kata di tengah nama kelas (Case Insensitive)
             $search = strtoupper($kelasNama);
 
             if (str_contains($search, 'RPL') || str_contains($search, 'PPLG')) {
@@ -85,19 +79,28 @@ class AbsensiController extends Controller
                 $labelJurusan = 'Produksi Film / Perfilman';
             }
         } elseif ($tingkat) {
-            // Jika pilih tingkat (misal '10'), otomatis dianggap semua jurusan di angkatan itu
             $labelJurusan = 'Semua Jurusan (Kelas ' . $tingkat . ')';
         }
 
-        // --- 5. Pengaturan Label Header & Nama File ---
-        $labelScope   = $kelasNama ? 'Kelas ' . $kelasNama : ($tingkat ? 'Kelas ' . $tingkat : 'Semua Kelas');
+        // --- 5. Header ---
+        $labelScope   = $kelasNama
+            ? 'Kelas ' . $kelasNama
+            : ($tingkat ? 'Kelas ' . $tingkat : 'Semua Kelas');
+
         $labelTanggal = Carbon::parse($tanggal)->translatedFormat('d F Y');
 
+        // --- 6. Generate PDF ---
         $pdf = Pdf::loadView('exports.absensi_pdf', compact(
-            'rows', 'labelScope', 'labelJurusan', 'labelTanggal'
+            'rows',
+            'labelScope',
+            'labelJurusan',
+            'labelTanggal'
         ))->setPaper('a4', 'portrait');
 
-        $slug = $kelasNama ? str_replace(' ', '-', strtolower($kelasNama)) : ($tingkat ? 'kelas' . $tingkat : 'semua');
+        $slug = $kelasNama
+            ? str_replace(' ', '-', strtolower($kelasNama))
+            : ($tingkat ? 'kelas' . $tingkat : 'semua');
+
         $filename = "absensi-mbg-{$tanggal}-{$slug}.pdf";
 
         return $pdf->download($filename);

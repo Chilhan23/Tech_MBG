@@ -11,6 +11,6 @@ class ManageAbsensiSiswas extends ManageRecords
 
     protected function getHeaderActions(): array
     {
-        return []; // canCreate() = false, jadi kosong
+        return []; 
     }
 }

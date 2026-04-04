@@ -26,20 +26,20 @@ class ScannerController extends Controller
             ], 404);
         }
 
-        // Cek ompreng kelas sudah diambil dari pusat belum
+        // Cek mbg kelas sudah diambil 
         if (!$student->kelas?->diambil) {
             return response()->json([
                 'success' => false,
-                'message' => 'Ompreng kelas belum diambil dari pusat.',
+                'message' => 'MBG kelas belum diambil dari pusat.',
                 'student' => null,
             ], 422);
         }
 
-        // Cek ompreng sudah dikembalikan ke pusat
+        // Cek mbg sudah dikembalikan 
         if ($student->kelas?->dikembalikan) {
             return response()->json([
                 'success' => false,
-                'message' => 'Ompreng kelas sudah dikembalikan ke pusat.',
+                'message' => 'MBG kelas sudah dikembalikan ke pusat.',
                 'student' => null,
             ], 422);
         }
@@ -80,7 +80,7 @@ class ScannerController extends Controller
         ], 200);
     }
 
-    // ── KEMBALI (Siswa scan setelah selesai makan) ──
+    // ── kembalikan (Siswa scan setelah selesai makan) ──
     public function apiReturn(Request $request)
     {
         $data = $request->validate([
@@ -101,7 +101,7 @@ class ScannerController extends Controller
         if ($student->kelas?->dikembalikan) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal! Ompreng kelas sudah dikembalikan ke pusat.',
+                'message' => 'Gagal! MBG kelas sudah dikembalikan ke pusat.',
                 'student' => null,
             ], 422);
         }
@@ -121,7 +121,7 @@ class ScannerController extends Controller
         if ($absensi->waktu_kembali) {
             return response()->json([
                 'success' => false,
-                'message' => 'Siswa sudah mengembalikan porsi sebelumnya.',
+                'message' => 'Siswa sudah mengembalikan MBG sebelumnya.',
                 'student' => [
                     'name'          => $student->name,
                     'nisn'          => $student->nisn,
@@ -138,7 +138,7 @@ class ScannerController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Porsi berhasil dikembalikan!',
+            'message' => 'MBG berhasil dikembalikan!',
             'student' => [
                 'name'          => $student->name,
                 'nisn'          => $student->nisn,
@@ -186,7 +186,7 @@ class ScannerController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Ompreng kelas ' . $kelas->nama_kelas . ' berhasil diambil!',
+                'message' => 'MBG kelas ' . $kelas->nama_kelas . ' berhasil diambil!',
                 'kelas'   => [
                     'nama_kelas'  => $kelas->nama_kelas,
                     'status'      => 'diambil',
@@ -204,7 +204,7 @@ class ScannerController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Ompreng kelas ' . $kelas->nama_kelas . ' berhasil dikembalikan!',
+                'message' => 'MBG kelas ' . $kelas->nama_kelas . ' berhasil dikembalikan!',
                 'kelas'   => [
                     'nama_kelas'    => $kelas->nama_kelas,
                     'status'        => 'dikembalikan',
@@ -217,7 +217,7 @@ class ScannerController extends Controller
         // Sudah selesai hari ini
         return response()->json([
             'success' => false,
-            'message' => 'Ompreng kelas ' . $kelas->nama_kelas . ' sudah selesai hari ini.',
+            'message' => 'MBG kelas ' . $kelas->nama_kelas . ' sudah selesai hari ini.',
             'kelas'   => [
                 'nama_kelas'    => $kelas->nama_kelas,
                 'status'        => 'selesai',
