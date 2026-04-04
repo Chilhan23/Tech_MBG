@@ -11,6 +11,7 @@ use App\Filament\Resources\Absensis\Schemas\AbsensiInfolist;
 use App\Filament\Resources\Absensis\Tables\AbsensisTable;
 use App\Models\Absensi;
 use BackedEnum;
+use UnitEnum;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -26,6 +27,8 @@ class AbsensiResource extends Resource
     protected static ?string $navigationLabel = 'Absensi MBG';
     protected static ?string $modelLabel = 'Absensi MBG';
     protected static ?string $pluralModelLabel = 'Absensi MBG';
+    protected static string|UnitEnum|null $navigationGroup = 'Manajemen MBG';
+    protected static ?int $navigationSort = 11;
 
     // ── Filter data berdasarkan role user ────────────────────
     public static function getEloquentQuery(): Builder

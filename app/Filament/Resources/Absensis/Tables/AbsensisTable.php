@@ -13,7 +13,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Student;
-use App\Models\Kelas; // Tambahkan ini
+use App\Models\Kelas;
 use Filament\Actions\Action;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,28 +21,29 @@ class AbsensisTable
 {
     public static function configure(Table $table): Table
     {
-        $user    = Auth::user();
-        $isAdmin = $user && $user->role === 'admin' && $user->kelas;
+        $user         = Auth::user();
+        $isAdmin      = $user && $user->role === 'admin' && $user->kelas_id;
+        $isSuperAdmin = $user && $user->role === 'superadmin';
 
-        // Filter tanggal
-        $filterTanggal = Filter::make('created_at')
+        // ── Filter Tanggal (semua role) ──
+        $filterTanggal = Filter::make('waktu_ambil')
             ->label('Tanggal')
             ->form([
-                DatePicker::make('created_from')->label('Dari Tanggal'),
-                DatePicker::make('created_until')->label('Sampai Tanggal'),
+                DatePicker::make('dari_tanggal')->label('Dari Tanggal'),
+                DatePicker::make('sampai_tanggal')->label('Sampai Tanggal'),
             ])
             ->query(function (Builder $query, array $data): Builder {
                 return $query
-                    ->when($data['created_from'],
-                        fn (Builder $query, $date) => $query->whereDate('created_at', '>=', $date))
-                    ->when($data['created_until'],
-                        fn (Builder $query, $date) => $query->whereDate('created_at', '<=', $date));
+                    ->when($data['dari_tanggal'],
+                        fn (Builder $q, $date) => $q->whereDate('waktu_ambil', '>=', $date))
+                    ->when($data['sampai_tanggal'],
+                        fn (Builder $q, $date) => $q->whereDate('waktu_ambil', '<=', $date));
             });
 
         $filters = [];
 
-        if (!$isAdmin) {
-            // Filter Tingkat - Cari di nama_kelas tabel kelas
+        // ── Filter tambahan hanya superadmin ──
+        if ($isSuperAdmin) {
             $filters[] = SelectFilter::make('tingkat')
                 ->label('Tingkat Kelas')
                 ->options([
@@ -52,32 +53,34 @@ class AbsensisTable
                 ])
                 ->query(function (Builder $query, array $data): Builder {
                     return $query->when($data['value'],
-                        fn (Builder $query, $value) =>
-                            $query->whereHas('student.kelas', // Ubah ini
-                                fn ($q) => $q->where('nama_kelas', 'like', $value . ' %')
-                            )
+                        fn (Builder $q, $value) =>
+                            $q->whereHas('student.kelas',
+                                fn ($q2) => $q2->where('nama_kelas', 'like', $value . ' %'))
                     );
                 });
 
             $filters[] = SelectFilter::make('jurusan')
                 ->label('Jurusan')
-                ->options(fn () => Student::query()->distinct()->orderBy('jurusan')->pluck('jurusan', 'jurusan')->toArray())
+                ->options(fn () => Student::query()
+                    ->distinct()
+                    ->orderBy('jurusan')
+                    ->pluck('jurusan', 'jurusan')
+                    ->toArray()
+                )
                 ->query(function (Builder $query, array $data): Builder {
                     return $query->when($data['value'],
-                        fn (Builder $query, $value) =>
-                            $query->whereHas('student', fn ($q) => $q->where('jurusan', $value))
+                        fn (Builder $q, $value) =>
+                            $q->whereHas('student', fn ($q2) => $q2->where('jurusan', $value))
                     );
                 });
 
-            // Filter Kelas Spesifik - Ambil dari database, jangan hardcode
             $filters[] = SelectFilter::make('kelas')
                 ->label('Kelas Spesifik')
-                ->options(fn () => Kelas::pluck('nama_kelas', 'nama_kelas')->toArray())
+                ->options(fn () => Kelas::orderBy('nama_kelas')->pluck('nama_kelas', 'id')->toArray())
                 ->query(function (Builder $query, array $data): Builder {
                     return $query->when($data['value'],
-                        fn (Builder $query, $value) =>
-                            $query->whereHas('student.kelas', // Ubah ini
-                                fn ($q) => $q->where('nama_kelas', $value))
+                        fn (Builder $q, $value) =>
+                            $q->whereHas('student', fn ($q2) => $q2->where('kelas_id', $value))
                     );
                 });
         }
@@ -86,43 +89,89 @@ class AbsensisTable
 
         return $table
             ->columns([
-                TextColumn::make('student.name')->label('Nama Siswa')->searchable()->sortable(),
-                TextColumn::make('student.nisn')->label('NISN')->sortable(),
-                // Ini sudah benar pakai dot notation
-                TextColumn::make('student.kelas.nama_kelas')->label('Kelas')->sortable(),
-                TextColumn::make('student.jurusan')->label('Jurusan')->sortable(),
-                TextColumn::make('created_at')->label('Waktu Ambil MBG')->dateTime('d/m/Y H:i')->sortable(),
+                TextColumn::make('student.name')
+                    ->label('Nama Siswa')
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('student.nisn')
+                    ->label('NISN')
+                    ->sortable(),
+
+                TextColumn::make('student.kelas.nama_kelas')
+                    ->label('Kelas')
+                    ->sortable(),
+
+                TextColumn::make('student.jurusan')
+                    ->label('Jurusan')
+                    ->sortable()
+                    ->visible($isSuperAdmin),
+
+                TextColumn::make('waktu_ambil')
+                    ->label('Waktu Ambil')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable(),
+
+                TextColumn::make('waktu_kembali')
+                    ->label('Waktu Kembali')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable()
+                    ->visible($isSuperAdmin)
+                    ->placeholder('Belum kembali'),
             ])
             ->filters($filters)
             ->modifyQueryUsing(function ($query) use ($isAdmin, $user) {
                 if ($isAdmin) {
-                    // ERROR DI SINI TADI: Harus tembus ke relasi kelas
-                    $query->whereHas('student.kelas',
-                        fn ($q) => $q->where('nama_kelas', $user->kelas)
+                    $query->whereHas('student',
+                        fn ($q) => $q->where('kelas_id', $user->kelas_id)
                     );
                 }
                 return $query;
             })
-            ->recordActions([ViewAction::make()])
+            ->defaultSort('waktu_ambil', 'desc')
+            ->recordActions([
+                ViewAction::make(),
+            ])
             ->toolbarActions([
+                // Export PDF hanya superadmin
                 Action::make('export_pdf')
                     ->label('Export PDF')
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('danger')
+                    ->visible($isSuperAdmin)
                     ->form([
                         Select::make('tingkat')
-                            ->options(['10' => 'Kelas 10', '11' => 'Kelas 11', '12' => 'Kelas 12'])
+                            ->label('Tingkat Kelas')
+                            ->placeholder('— Semua Tingkat —')
+                            ->options([
+                                '10' => 'Kelas 10',
+                                '11' => 'Kelas 11',
+                                '12' => 'Kelas 12',
+                            ])
                             ->live()
                             ->afterStateUpdated(fn ($set) => $set('kelas', null)),
+
                         Select::make('kelas')
                             ->label('Atau Kelas Spesifik')
-                            // Ambil dari database biar konsisten
-                            ->options(fn () => Kelas::pluck('nama_kelas', 'nama_kelas')->toArray())
+                            ->placeholder('— Atau pilih kelas tertentu —')
+                            ->options(fn () => Kelas::orderBy('nama_kelas')->pluck('nama_kelas', 'nama_kelas')->toArray())
                             ->live()
                             ->afterStateUpdated(fn ($set) => $set('tingkat', null)),
+
                         Select::make('jurusan')
-                            ->options(fn () => Student::query()->distinct()->pluck('jurusan', 'jurusan')->toArray()),
-                        DatePicker::make('tanggal')->default(now()->toDateString())->required(),
+                            ->label('Jurusan (opsional)')
+                            ->placeholder('Semua Jurusan')
+                            ->options(fn () => Student::query()
+                                ->distinct()
+                                ->orderBy('jurusan')
+                                ->pluck('jurusan', 'jurusan')
+                                ->toArray()
+                            ),
+
+                        DatePicker::make('tanggal')
+                            ->label('Tanggal')
+                            ->default(now()->toDateString())
+                            ->required(),
                     ])
                     ->action(function (array $data) {
                         $params = http_build_query(array_filter([
@@ -133,7 +182,10 @@ class AbsensisTable
                         ]));
                         redirect()->away(route('absensi.export-pdf') . '?' . $params);
                     }),
-                BulkActionGroup::make([DeleteBulkAction::make()]),
+
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 }

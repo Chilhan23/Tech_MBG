@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('kelas', function (Blueprint $table) {
             $table->id();
             $table->string('nama_kelas')->unique();
+            $table->timestamp('diambil')->nullable();
+            $table->timestamp('dikembalikan')->nullable();
             $table->timestamps();
         });
     }
