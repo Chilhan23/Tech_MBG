@@ -5,6 +5,6 @@
         style="height: 40px; width: auto;"
     >
     <span class="text-gray-900 dark:text-white font-bold text-lg">
-        Telkom BGN
+        BGN Telkom
     </span>
 </div>
