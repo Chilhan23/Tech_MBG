@@ -24,6 +24,7 @@ class UserResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
     protected static ?string $navigationLabel = 'Manajemen Data Wali Kelas';
     protected static string|UnitEnum|null $navigationGroup = 'Pengaturan';
+    protected static ?int $navigationSort = 100;
 
     // Function for Super Admin only
     public static function canAccess(): bool
