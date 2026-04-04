@@ -1,21 +1,19 @@
 <?php
-
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Model;
 
-class Student extends Model 
+class Student extends Model
 {
-    # Fillable attributes for mass assignment
     protected $fillable = [
         'nisn',
         'name',
         'jurusan',
-        'kelas_id', 
-        'kelas',
+        'kelas_id',
         'jenis_kelamin',
-    ];  
-    public function absensis(){
+    ];
+
+    public function absensis()
+    {
         return $this->hasMany(Absensi::class);
     }
 

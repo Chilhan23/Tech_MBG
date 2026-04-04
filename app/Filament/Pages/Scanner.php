@@ -14,4 +14,9 @@ class Scanner extends Page
 
     // This MUST NOT be static
     protected string $view = 'filament.pages.scanner';
+
+    public static function shouldRegisterNavigation(): bool
+{
+    return false;
+}
 }

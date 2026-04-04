@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('role')->default('superadmin');
             $table->string('email')->unique();
-            $table->string('kelas')->nullable();
+            $table->foreignId('kelas_id')->nullable()->constrained('kelas')->onDelete('set null');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
