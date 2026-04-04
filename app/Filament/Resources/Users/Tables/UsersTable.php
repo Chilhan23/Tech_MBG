@@ -39,7 +39,7 @@ class UsersTable
                         default      => $state,
                     }),
 
-                TextColumn::make('kelas')
+                TextColumn::make('Kelas.nama_kelas')
                     ->label('Kelas')
                     ->placeholder('Semua Kelas')
                     ->sortable(),
