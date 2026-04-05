@@ -34,17 +34,47 @@ class AbsensiKelasTable
                     ->label('Waktu Kembali')->dateTime('H:i')
                     ->placeholder('Belum dikembalikan')->sortable(),
                 TextColumn::make('status')
-                    ->label('Status')
-                    ->badge()
-                    ->state(fn (KelasLog $record): string =>
-                        $record->dikembalikan ? 'Selesai'
-                        : ($record->diambil ? 'Sedang Makan' : 'Belum Ambil')
-                    )
-                    ->color(fn (string $state): string => match ($state) {
-                        'Selesai'      => 'success',
-                        'Sedang Makan' => 'warning',
-                        default        => 'gray',
-                    }),
+            ->label('Status')
+            ->badge()
+            ->state(function (KelasLog $record): string {
+                if ($record->dikembalikan) {
+                    // Cek apakah terlambat saat dikembalikan
+                    $batas = $record->diambil->addHour();
+                    if ($record->dikembalikan->isAfter($batas)) {
+                        $menit = round($record->diambil->addHour()->diffInMinutes($record->dikembalikan));
+                        return 'Terlambat ' . $menit . ' mnt';
+                    }
+                    return 'Selesai';
+                }
+                if ($record->diambil) {
+                    // Sedang makan, cek apakah sudah lewat batas
+                    $batas = $record->diambil->addHour();
+                    if (now()->isAfter($batas)) {
+                        $menit = round($batas->diffInMinutes(now()));
+                        return 'Lewat ' . $menit . ' mnt';
+                    }
+                    return 'Sedang Makan';
+                }
+                return 'Belum Ambil';
+            })
+            ->color(fn (string $state): string => match(true) {
+                str_starts_with($state, 'Terlambat') => 'danger',
+                str_starts_with($state, 'Lewat')     => 'warning',
+                $state === 'Selesai'                  => 'success',
+                $state === 'Sedang Makan'             => 'info',
+                default                               => 'gray',
+            }),
+            TextColumn::make('batas_waktu')
+            ->label('Batas Kembali')
+            ->state(fn (KelasLog $record): string =>
+                $record->diambil
+                    ? $record->diambil->addHour()->format('H:i')
+                    : '-'
+            )
+            ->color(function (KelasLog $record): string {
+                if (!$record->diambil || $record->dikembalikan) return 'gray';
+                return now()->isAfter($record->diambil->addHour()) ? 'danger' : 'success';
+            }),
             ])
             ->filters([
                 Filter::make('tanggal')
@@ -70,7 +100,6 @@ class AbsensiKelasTable
                     $query->whereDate('tanggal', today());
                 }
             })
-            ->recordActions([ViewAction::make()])
             ->toolbarActions([
                 BulkActionGroup::make([DeleteBulkAction::make()]),
             ])

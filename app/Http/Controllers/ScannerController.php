@@ -167,7 +167,6 @@ class ScannerController extends Controller
             ], 404);
         }
 
-        // Cek log HARI INI saja — persis seperti absensis
         $log = KelasLog::where('kelas_id', $kelas->id)
             ->whereDate('tanggal', today())
             ->first();
@@ -191,13 +190,34 @@ class ScannerController extends Controller
                     'nama_kelas'  => $kelas->nama_kelas,
                     'status'      => 'diambil',
                     'waktu_ambil' => $now->format('H:i:s'),
+                    'batas_kembali' => $now->copy()->addHour()->format('H:i'),
                 ],
             ]);
         }
 
         // Sudah diambil tapi belum dikembalikan
         if (!$log->dikembalikan) {
-            $now = now();
+            $now          = now();
+            $batasKembali = $log->diambil->copy()->addHour();
+
+            // Validasi: lewat 1 jam
+            if ($now->isAfter($batasKembali)) {
+                $terlambat = $batasKembali->diffInMinutes($now);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pengembalian MBG kelas ' . $kelas->nama_kelas
+                        . ' terlambat ' . $terlambat . ' menit!'
+                        . ' (Batas: ' . $batasKembali->format('H:i') . ')',
+                    'kelas' => [
+                        'nama_kelas'    => $kelas->nama_kelas,
+                        'status'        => 'terlambat',
+                        'waktu_ambil'   => $log->diambil->format('H:i'),
+                        'batas_kembali' => $batasKembali->format('H:i'),
+                        'terlambat'     => $terlambat . ' menit',
+                    ],
+                ], 422);
+            }
 
             $kelas->update(['dikembalikan' => $now]);
             $log->update(['dikembalikan' => $now]);
@@ -210,6 +230,7 @@ class ScannerController extends Controller
                     'status'        => 'dikembalikan',
                     'waktu_ambil'   => $log->diambil->format('H:i'),
                     'waktu_kembali' => $now->format('H:i:s'),
+                    'batas_kembali' => $batasKembali->format('H:i'),
                 ],
             ]);
         }

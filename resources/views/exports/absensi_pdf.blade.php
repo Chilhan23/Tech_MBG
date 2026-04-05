@@ -112,10 +112,10 @@
 <div class="kop">
     <img src="/images/pancacita-provinsi-aceh-seeklogo.png" alt="Logo Pancasila" class="kop-logo">
     <div class="kop-text">
-        <h1>PEMERINTAH KOTA / KABUPATEN</h1>
+        <h1>Pemerintah Aceh</h1>
         <p>DINAS PENDIDIKAN</p>
-        <p>SMK NEGERI XXXXX</p>
-        <p>Alamat Sekolah, Kota, Provinsi</p>
+        <p>SMK NEGERI 5 Telkom Banda Aceh</p>
+        <p>Jl. Stadion H. Dimurthala No. 5, Kota Baru, Kecamatan Kuta Alam, Kota Banda Aceh, Aceh</p>
     </div>
 </div>
 
@@ -164,11 +164,11 @@
                 <td>{{ $row['waktu_kembali'] ?? '-' }}</td>
                 <td>
                     @if ($row['sudah_ambil'] && $row['waktu_kembali'])
-                        Kembali
+                        Sudah DiKembalikan
                     @elseif ($row['sudah_ambil'])
                         Belum Kembali
                     @else
-                        Belum Ambil
+                        Tidak Hadir
                     @endif
                 </td>
             </tr>
@@ -197,7 +197,7 @@
 
 <div class="footer">
     <div class="ttd">
-        <p>{{ now()->translatedFormat('d F Y') }}</p>
+        <p>{{ now()->translatedFormat('d F Y') }},Banda Aceh</p>
         <p>Petugas,</p>
 
         <div class="nama">
