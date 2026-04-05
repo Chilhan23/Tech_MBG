@@ -28,23 +28,28 @@ class ScannerController extends Controller
                     ], 404);
                 }
 
-                // Cek mbg kelas sudah diambil apa belum ( jadi kelas wajib ambil dulu / scan dari tempat aambil mbg)
-                if (!$student->kelas?->diambil) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'MBG kelas belum diambil dari pusat.',
-                        'student' => null,
-                    ], 422);
-                }
+                 $kelasLog = KelasLog::where('kelas_id', $student->kelas->id)
+                    ->whereDate('tanggal', today())
+                    ->first();
 
-                // Cek mbg sudah dikembalikan apa belum ( jadi siswa wajib scan kembali setelah selesai makan,supaya kelas tau siapa siswa yg belum mengembalikan)
-                if ($student->kelas?->dikembalikan) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'MBG kelas sudah dikembalikan ke pusat.',
-                        'student' => null,
-                    ], 422);
-                }
+
+                   // kelas Belum ambil hari ini
+                    if (!$kelasLog || !$kelasLog->diambil) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'MBG kelas belum diambil dari pusat.',
+                            'student' => null,
+                        ], 422);
+                    }
+
+                    // Cek mbg sudah dikembalikan ke pusat
+                    if ($kelasLog->dikembalikan) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Gagal! MBG kelas sudah dikembalikan ke pusat.',
+                            'student' => null,
+                        ], 422);
+                    }
 
                 //ambil data absensi hari ini untuk siswa
                 $absensiHariIni = $student->absensis()
@@ -121,7 +126,7 @@ class ScannerController extends Controller
                     if ($kelasLog->dikembalikan) {
                         return response()->json([
                             'success' => false,
-                            'message' => 'Gagal! MBG kelas sudah dn ke pusat.',
+                            'message' => 'Gagal! MBG kelas sudah dikembalikan ke pusat.',
                             'student' => null,
                         ], 422);
                     }
