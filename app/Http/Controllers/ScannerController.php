@@ -75,6 +75,7 @@ class ScannerController extends Controller
                 // Catat absensi
                 $absensi = $student->absensis()->create([
                     'waktu_ambil' => now(),
+                    'kelas_log_id' => $kelasLog->id,
                 ]);
 
                 // response sukses dengan data siswa dan waktu ambil  

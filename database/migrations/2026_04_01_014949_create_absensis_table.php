@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('absensis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('kelas_log_id')->nullable()->constrained('kelas_logs')->cascadeOnDelete();
             $table->timestamp('waktu_ambil')->useCurrent(); 
             $table->timestamp('waktu_kembali')->nullable();
             $table->timestamp('created_at')->useCurrent();
