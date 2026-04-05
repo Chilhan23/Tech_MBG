@@ -15,17 +15,29 @@
             border-bottom: 3px double #000;
             padding-bottom: 10px;
             margin-bottom: 15px;
+            position: relative;
         }
 
         .kop-logo {
             width: 60px;
             height: auto;
             object-fit: contain;
-            float: left;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .kop-logo-right {
+            width: 70px;
+            height: auto;
+            object-fit: contain;
+            position: absolute;
+            right: 0;
+            top: 0;
         }
 
         .kop-text {
-            transform: translateX(-28px);
+            margin: 0 80px; /* space for logos */
         }
 
         .kop h1 {
@@ -111,11 +123,12 @@
 
 <div class="kop">
     <img src="/images/pancacita-provinsi-aceh-seeklogo.png" alt="Logo Pancasila" class="kop-logo">
+    <img src="/images/Logo_SMKN5_Banda_Aceh.png" alt="Logo SMK" class="kop-logo-right">
     <div class="kop-text">
         <h1>PEMERINTAH KOTA / KABUPATEN</h1>
-        <p>DINAS PENDIDIKAN</p>
-        <p>SMK NEGERI XXXXX</p>
-        <p>Alamat Sekolah, Kota, Provinsi</p>
+        <p>DINAS PENDIDIKAN ACEH</p>
+        <p>SMK NEGERI 5 TELKOM BANDA ACEH</p>
+        <p>Jl. Stadion H. Dimurthala No. 5, Kota Baru, Kec. Kuta Alam, Banda Aceh, Aceh</p>
     </div>
 </div>
 
