@@ -229,6 +229,7 @@ class ScannerController extends Controller
                 ]);
             }
 
+            
             // Sudah diambil tapi belum dikembalikan
             if (!$log->dikembalikan) {
 
@@ -259,9 +260,27 @@ class ScannerController extends Controller
                         ], 422);
                     }
 
-                    $now          = now();
-                    $batasKembali = $log->diambil->copy()->addHour();
 
+                    $now = now(); 
+                    $menitDiambil = (int) $log->diambil->diffInMinutes($now);
+
+                    if ($menitDiambil < 5) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'MBG kelas ' . $kelas->nama_kelas 
+                                . ' baru diambil ' . $menitDiambil . ' menit yang lalu.'
+                                . ' Aktivitas Abnormal: terlalu cepat mengembalikan MBG!',
+                            'kelas' => [
+                                'nama_kelas'  => $kelas->nama_kelas,
+                                'status'      => 'terlalu_cepat',
+                                'waktu_ambil' => $log->diambil->format('H:i'),
+                                'diambil_sejak' => $menitDiambil . ' menit lalu',
+                                'bisa_kembali_mulai' => $log->diambil->copy()->addMinutes(5)->format('H:i'),
+                            ],
+                        ], 422);
+                    }
+
+                    $batasKembali = $log->diambil->copy()->addHour();
                     // Validasi: lewat 1 jam
                     if ($now->isAfter($batasKembali)) {
                         $terlambat = $batasKembali->diffInMinutes($now);
