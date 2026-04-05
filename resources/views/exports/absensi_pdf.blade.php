@@ -125,17 +125,10 @@
     <img src="/images/pancacita-provinsi-aceh-seeklogo.png" alt="Logo Pancasila" class="kop-logo">
     <img src="/images/Logo_SMKN5_Banda_Aceh.png" alt="Logo SMK" class="kop-logo-right">
     <div class="kop-text">
-<<<<<<< HEAD
         <h1>Pemerintah Aceh</h1>
         <p>DINAS PENDIDIKAN</p>
         <p>SMK NEGERI 5 Telkom Banda Aceh</p>
         <p>Jl. Stadion H. Dimurthala No. 5, Kota Baru, Kecamatan Kuta Alam, Kota Banda Aceh, Aceh</p>
-=======
-        <h1>PEMERINTAH KOTA / KABUPATEN</h1>
-        <p>DINAS PENDIDIKAN ACEH</p>
-        <p>SMK NEGERI 5 TELKOM BANDA ACEH</p>
-        <p>Jl. Stadion H. Dimurthala No. 5, Kota Baru, Kec. Kuta Alam, Banda Aceh, Aceh</p>
->>>>>>> tes
     </div>
 </div>
 
