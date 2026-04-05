@@ -691,7 +691,7 @@
     function onScanSuccess(decodedText) { if (decodedText) submitKelas(decodedText.trim()); }
     function startFallbackScanner() {
         try {
-            const scanner = new Html5QrcodeScanner('reader', { fps: 10, qrbox: { width: 220, height: 220 } }, false);
+            const scanner = new Html5QrcodeScanner('reader', { fps: 10, qrbox: { width: 800, height: 400 } }, false);
             scanner.render(onScanSuccess, () => {});
         } catch (_) { setStatus('Kamera tidak tersedia.'); }
     }
@@ -700,7 +700,7 @@
             html5QrCode = new Html5Qrcode('reader');
             html5QrCode.start(
                 { facingMode: 'environment' },
-                { fps: 10, qrbox: { width: 220, height: 220 } },
+                { fps: 10, qrbox: { width: 400, height: 400 } },
                 onScanSuccess, () => {}
             ).then(() => setStatus('Arahkan kamera ke QR Kelas.'))
              .catch(() => startFallbackScanner());

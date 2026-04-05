@@ -736,7 +736,7 @@
         function startFallbackScanner() {
             try {
                 html5QrCodeScanner = new Html5QrcodeScanner('reader', {
-                    fps: 10, qrbox: { width: 220, height: 220 },
+                    fps: 10, qrbox: { width: 800, height: 400 },
                     rememberLastUsedCamera: true, showTorchButtonIfSupported: true,
                     supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA, Html5QrcodeScanType.SCAN_TYPE_FILE],
                 }, false);
@@ -756,7 +756,7 @@
                 html5QrCode = new Html5Qrcode('reader');
                 html5QrCode.start(
                     { facingMode: "environment" }, // ← ini cara paksa kamera belakang
-                    { fps: 10, qrbox: { width: 220, height: 220 } },
+                    { fps: 10, qrbox: { width: 400, height: 400 } },
                     onScanSuccess, () => {}
                 )
                 .then(() => setStatus('Arahkan kamera ke QR Code siswa.'))
