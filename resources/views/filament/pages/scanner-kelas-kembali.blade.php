@@ -631,6 +631,7 @@
                 <div><div class="sc-info-key">Status</div><div class="sc-info-val">${k.status}</div></div>
                 ${k.waktu_ambil ? `<div><div class="sc-info-key">Waktu Ambil</div><div class="sc-info-val">${k.waktu_ambil}</div></div>` : ''}
                 ${k.waktu_kembali ? `<div><div class="sc-info-key">Waktu Kembali</div><div class="sc-info-val">${k.waktu_kembali}</div></div>` : ''}
+                ${k.belum_kembali != null ? `<div><div class="sc-info-key">Belum Kembali</div><div class="sc-info-val">${k.belum_kembali} siswa</div></div>` : ''}
             `;
         } else {
             body.style.display = 'none';

@@ -103,14 +103,28 @@ class ScannerController extends Controller
                     ], 404);
                 }
 
-                // Cek ompreng sudah dikembalikan ke pusat
-                if ($student->kelas?->dikembalikan) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Gagal! MBG kelas sudah dikembalikan ke pusat.',
-                        'student' => null,
-                    ], 422);
-                }
+                $kelasLog = KelasLog::where('kelas_id', $student->kelas->id)
+                ->whereDate('tanggal', today())
+                ->first();
+
+
+                   // kelas Belum ambil hari ini
+                    if (!$kelasLog || !$kelasLog->diambil) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'MBG kelas belum diambil dari pusat.',
+                            'student' => null,
+                        ], 422);
+                    }
+
+                    // Cek mbg sudah dikembalikan ke pusat
+                    if ($kelasLog->dikembalikan) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Gagal! MBG kelas sudah dn ke pusat.',
+                            'student' => null,
+                        ], 422);
+                    }
 
                 // query ambil absen
                 $absensi = $student->absensis()
@@ -178,32 +192,7 @@ class ScannerController extends Controller
                 ], 404);
             }
 
-            //ambil data siswa untuk kelas ini
-           $studentIds = Student::where('kelas_id', $kelas->id)->pluck('id');
-
-            // Query Siswa yang ambil hari ini untuk kelas ini
-            $absensi = Absensi::whereIn('student_id', $studentIds)
-                ->whereDate('waktu_ambil', today())
-                ->count();
-                
-             // Query Siswa yang kembali hari ini untuk kelas ini
-            $kembali = Absensi::whereIn('student_id', $studentIds)
-                ->whereDate('waktu_kembali', today())
-                ->count();
-
-            if($absensi != $kembali){
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Masih ada siswa yang belum mengembalikan / Scan Kembalikan MBG!',
-                    'kelas'   => [
-                        'nama_kelas' => $kelas->nama_kelas,
-                        'absensi'    => $absensi,
-                        'kembali'    => $kembali,
-                        'belum_kembali' => $absensi - $kembali,
-                    ],
-                ], 422);
-            }
-
+            
 
 
             $log = KelasLog::where('kelas_id', $kelas->id)
@@ -236,54 +225,82 @@ class ScannerController extends Controller
 
             // Sudah diambil tapi belum dikembalikan
             if (!$log->dikembalikan) {
-                $now          = now();
-                $batasKembali = $log->diambil->copy()->addHour();
 
-                // Validasi: lewat 1 jam
-                if ($now->isAfter($batasKembali)) {
-                    $terlambat = $batasKembali->diffInMinutes($now);
+                //ambil data siswa untuk kelas ini
+                $studentIds = Student::where('kelas_id', $kelas->id)->pluck('id');
+
+                    // Query Siswa yang ambil hari ini untuk kelas ini
+                    $absensi = Absensi::whereIn('student_id', $studentIds)
+                        ->whereDate('waktu_ambil', today())
+                        ->count();
+
+                    // Query Siswa yang kembali hari ini untuk kelas ini
+                    $kembali = Absensi::whereIn('student_id', $studentIds)
+                        ->whereDate('waktu_kembali', today())
+                        ->count();
+
+                    if($absensi != $kembali && !$kelas->dikembalikan){
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Masih ada siswa yang belum mengembalikan / Scan Kembalikan MBG!',
+                            'kelas'   => [
+                                'nama_kelas' => $kelas->nama_kelas,
+                                'status' => 'belum semua kembali',
+                                'absensi'    => $absensi,
+                                'kembali'    => $kembali,
+                                'belum_kembali' => $absensi - $kembali,
+                            ],
+                        ], 422);
+                    }
+
+                    $now          = now();
+                    $batasKembali = $log->diambil->copy()->addHour();
+
+                    // Validasi: lewat 1 jam
+                    if ($now->isAfter($batasKembali)) {
+                        $terlambat = $batasKembali->diffInMinutes($now);
+
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Pengembalian MBG kelas ' . $kelas->nama_kelas
+                                . ' terlambat ' . $terlambat . ' menit!'
+                                . ' (Batas: ' . $batasKembali->format('H:i') . ')',
+                            'kelas' => [
+                                'nama_kelas'    => $kelas->nama_kelas,
+                                'status'        => 'terlambat',
+                                'waktu_ambil'   => $log->diambil->format('H:i'),
+                                'batas_kembali' => $batasKembali->format('H:i'),
+                                'terlambat'     => $terlambat . ' menit',
+                            ],
+                        ], 422);
+                    }
+
+                    $kelas->update(['dikembalikan' => $now]);
+                    $log->update(['dikembalikan' => $now]);
 
                     return response()->json([
-                        'success' => false,
-                        'message' => 'Pengembalian MBG kelas ' . $kelas->nama_kelas
-                            . ' terlambat ' . $terlambat . ' menit!'
-                            . ' (Batas: ' . $batasKembali->format('H:i') . ')',
-                        'kelas' => [
+                        'success' => true,
+                        'message' => 'MBG kelas ' . $kelas->nama_kelas . ' berhasil dikembalikan!',
+                        'kelas'   => [
                             'nama_kelas'    => $kelas->nama_kelas,
-                            'status'        => 'terlambat',
+                            'status'        => 'dikembalikan',
                             'waktu_ambil'   => $log->diambil->format('H:i'),
+                            'waktu_kembali' => $now->format('H:i:s'),
                             'batas_kembali' => $batasKembali->format('H:i'),
-                            'terlambat'     => $terlambat . ' menit',
                         ],
-                    ], 422);
+                    ]);
                 }
 
-                $kelas->update(['dikembalikan' => $now]);
-                $log->update(['dikembalikan' => $now]);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'MBG kelas ' . $kelas->nama_kelas . ' berhasil dikembalikan!',
-                    'kelas'   => [
-                        'nama_kelas'    => $kelas->nama_kelas,
-                        'status'        => 'dikembalikan',
-                        'waktu_ambil'   => $log->diambil->format('H:i'),
-                        'waktu_kembali' => $now->format('H:i:s'),
-                        'batas_kembali' => $batasKembali->format('H:i'),
-                    ],
-                ]);
-            }
-
-            // Sudah selesai hari ini
+                // Sudah selesai hari ini
             return response()->json([
                 'success' => false,
                 'message' => 'MBG kelas ' . $kelas->nama_kelas . ' sudah selesai hari ini.',
                 'kelas'   => [
-                    'nama_kelas'    => $kelas->nama_kelas,
-                    'status'        => 'selesai',
-                    'waktu_ambil'   => $log->diambil->format('H:i'),
-                    'waktu_kembali' => $log->dikembalikan->format('H:i'),
-                ],
+                'nama_kelas'    => $kelas->nama_kelas,
+                'status'        => 'selesai',
+                'waktu_ambil'   => $log->diambil->format('H:i'),
+                'waktu_kembali' => $log->dikembalikan->format('H:i'),
+                    ],
             ], 422);
     }
 
