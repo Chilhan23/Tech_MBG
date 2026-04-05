@@ -14,7 +14,7 @@ class StudentInfolist
                 TextEntry::make('nisn'),
                 TextEntry::make('name'),
                 TextEntry::make('jurusan'),
-                TextEntry::make('kelas'),
+                TextEntry::make('kelas.nama_kelas'),
                 TextEntry::make('jenis_kelamin'),
                 TextEntry::make('created_at')
                     ->dateTime()
