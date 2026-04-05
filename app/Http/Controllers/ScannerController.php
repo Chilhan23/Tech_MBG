@@ -178,6 +178,34 @@ class ScannerController extends Controller
                 ], 404);
             }
 
+            //ambil data siswa untuk kelas ini
+           $studentIds = Student::where('kelas_id', $kelas->id)->pluck('id');
+
+            // Query Siswa yang ambil hari ini untuk kelas ini
+            $absensi = Absensi::whereIn('student_id', $studentIds)
+                ->whereDate('waktu_ambil', today())
+                ->count();
+                
+             // Query Siswa yang kembali hari ini untuk kelas ini
+            $kembali = Absensi::whereIn('student_id', $studentIds)
+                ->whereDate('waktu_kembali', today())
+                ->count();
+
+            if($absensi != $kembali){
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Masih ada siswa yang belum mengembalikan / Scan Kembalikan MBG!',
+                    'kelas'   => [
+                        'nama_kelas' => $kelas->nama_kelas,
+                        'absensi'    => $absensi,
+                        'kembali'    => $kembali,
+                        'belum_kembali' => $absensi - $kembali,
+                    ],
+                ], 422);
+            }
+
+
+
             $log = KelasLog::where('kelas_id', $kelas->id)
                 ->whereDate('tanggal', today())
                 ->first();
