@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Auth;
 class StudentResource extends Resource
 {
     protected static ?string $model = Student::class;
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user';
     protected static ?string $navigationLabel = 'Data Siswa/i';
     protected static ?string $modelLabel = 'Data Siswa/i';
     protected static ?string $pluralModelLabel = 'Data Siswa/i';

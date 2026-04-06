@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 class AbsensiKelasResource extends Resource
 {
     protected static ?string $model = KelasLog::class;
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-academic-cap';
     protected static ?string $navigationLabel = 'Absensi Kelas';
     protected static ?string $modelLabel = 'Absensi Kelas';
     protected static ?string $pluralModelLabel = 'Absensi Kelas';

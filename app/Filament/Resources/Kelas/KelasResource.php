@@ -23,8 +23,7 @@ class KelasResource extends Resource
     protected static ?string $model = Kelas::class;
     protected static string|UnitEnum|null $navigationGroup = 'Manajemen MBG';
     protected static ?int $navigationSort = 12;
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
     public static function canAccess(): bool
     {
         return Auth::user()?->isSuperAdmin() ?? false;

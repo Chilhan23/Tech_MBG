@@ -63,8 +63,6 @@
         "hasown": "^2.0.2",
         "is-fullwidth-code-point": "^3.0.0",
         "jiti": "^2.6.1",
-        "lightningcss": "^1.32.0",
-        "lightningcss-linux-x64-gnu": "^1.32.0",
         "magic-string": "^0.30.21",
         "math-intrinsics": "^1.1.0",
         "mime-db": "^1.52.0",
