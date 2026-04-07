@@ -6,13 +6,13 @@ use Filament\Auth\Pages\Login as BaseLogin;
 
 class Login extends BaseLogin
 {
-    public function getHeading(): string
-    {
-        return 'Selamat Datang Panitia!';
-    }
+    // public function getHeading(): string
+    // {
+    //     return 'Selamat Datang Panitia!';
+    // }
 
-    public function getSubheading(): ?string
-    {
-        return 'Silakan login untuk melanjutkan';
-    }
+    // public function getSubheading(): ?string
+    // {
+    //     return 'Silakan login untuk melanjutkan';
+    // }
 }

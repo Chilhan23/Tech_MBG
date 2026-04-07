@@ -74,128 +74,197 @@ class PanitiaPanelProvider extends PanelProvider
 ->renderHook(
     'panels::body.start',
     fn () => request()->routeIs('filament.panitia.auth.login')
-        ? Blade::render('<style>
+        ? Blade::render('
+            <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+            <style>
+    * { box-sizing: border-box; }
+
     body {
-        background-color: #0f2027;
-        background-image:
-            radial-gradient(ellipse 80% 60% at 20% 10%, rgba(6, 182, 212, 0.18) 0%, transparent 60%),
-            radial-gradient(ellipse 60% 80% at 80% 90%, rgba(16, 185, 129, 0.15) 0%, transparent 60%),
-            radial-gradient(ellipse 70% 50% at 60% 40%, rgba(59, 130, 246, 0.10) 0%, transparent 55%),
-            radial-gradient(ellipse 90% 70% at 10% 80%, rgba(6, 95, 70, 0.20) 0%, transparent 60%);
-        animation: gradientShift 12s ease-in-out infinite alternate;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
         min-height: 100vh;
-        position: relative;
-        overflow: hidden;
+        font-family: "Plus Jakarta Sans", sans-serif !important;
     }
 
-    body::after {
+    /* Overlay gelap di atas background */
+    body::before {
         content: "";
         position: fixed;
-        width: 600px;
-        height: 600px;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, transparent 70%);
-        top: -150px;
-        right: -100px;
-        animation: orbFloat 18s ease-in-out infinite;
-        pointer-events: none;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(0,20,60,0.72) 0%, rgba(0,0,0,0.55) 100%);
         z-index: 0;
     }
 
-    @keyframes gradientShift {
-        0% {
-            background-image:
-                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(6, 182, 212, 0.18) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 80% at 80% 90%, rgba(16, 185, 129, 0.15) 0%, transparent 60%),
-                radial-gradient(ellipse 70% 50% at 60% 40%, rgba(59, 130, 246, 0.10) 0%, transparent 55%),
-                radial-gradient(ellipse 90% 70% at 10% 80%, rgba(6, 95, 70, 0.20) 0%, transparent 60%);
-        }
-        33% {
-            background-image:
-                radial-gradient(ellipse 80% 60% at 70% 30%, rgba(16, 185, 129, 0.18) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 80% at 20% 70%, rgba(6, 182, 212, 0.15) 0%, transparent 60%),
-                radial-gradient(ellipse 70% 50% at 80% 80%, rgba(6, 95, 70, 0.12) 0%, transparent 55%),
-                radial-gradient(ellipse 90% 70% at 40% 10%, rgba(59, 130, 246, 0.14) 0%, transparent 60%);
-        }
-        66% {
-            background-image:
-                radial-gradient(ellipse 80% 60% at 40% 80%, rgba(59, 130, 246, 0.16) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 80% at 60% 20%, rgba(6, 95, 70, 0.18) 0%, transparent 60%),
-                radial-gradient(ellipse 70% 50% at 10% 50%, rgba(16, 185, 129, 0.10) 0%, transparent 55%),
-                radial-gradient(ellipse 90% 70% at 85% 60%, rgba(6, 182, 212, 0.14) 0%, transparent 60%);
-        }
-        100% {
-            background-image:
-                radial-gradient(ellipse 80% 60% at 55% 15%, rgba(6, 95, 70, 0.18) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 80% at 30% 85%, rgba(59, 130, 246, 0.15) 0%, transparent 60%),
-                radial-gradient(ellipse 70% 50% at 75% 55%, rgba(6, 182, 212, 0.12) 0%, transparent 55%),
-                radial-gradient(ellipse 90% 70% at 15% 30%, rgba(16, 185, 129, 0.16) 0%, transparent 60%);
-        }
-    }
-
-    @keyframes orbFloat {
-        0%, 100% { transform: translate(0, 0) scale(1); }
-        33%       { transform: translate(-60px, 80px) scale(1.1); }
-        66%       { transform: translate(40px, -50px) scale(0.9); }
-    }
-
-    @keyframes cardReveal {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-            filter: blur(6px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-            filter: blur(0);
-        }
-    }
-
-    .fi-simple-main {
-        background: rgba(0, 0, 0, 0.5) !important;
-        border: none !important;
-        box-shadow: none !important;
-        backdrop-filter: blur(8px) !important;
-        border-radius: 16px !important;
-        opacity: 0;
-        animation: cardReveal 0.8s ease 1s forwards;
+    .fi-simple-layout {
         position: relative;
         z-index: 1;
     }
 
+    /* ── CARD ── */
+    .fi-simple-main {
+        background: rgba(255, 255, 255, 0.07) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        box-shadow: 0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.05) !important;
+        backdrop-filter: blur(24px) saturate(1.4) !important;
+        -webkit-backdrop-filter: blur(24px) saturate(1.4) !important;
+        border-radius: 24px !important;
+        padding: 40px 36px 36px !important;
+        width: 420px !important;
+        max-width: 95vw !important;
+        opacity: 0;
+        transform: translateY(28px);
+        animation: cardReveal 0.75s cubic-bezier(.22,.68,0,1.2) 0.3s forwards;
+        position: relative;
+        overflow: visible !important;
+    }
+
+    /* Garis aksen atas card */
+    .fi-simple-main::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 50%;
+        transform: translateX(-50%);
+        width: 60%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(99,179,237,0.9), rgba(147,197,253,1), rgba(99,179,237,0.9), transparent);
+        border-radius: 0 0 4px 4px;
+    }
+
+    @keyframes cardReveal {
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── HEADER LOGO AREA ── */
+    .login-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        margin-bottom: 28px;
+        animation: fadeUp 0.6s ease 0.55s both;
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(12px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-logos {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 18px;
+    }
+
+    .login-logos img {
+        height: 70px;
+        width: auto;
+        object-fit: contain;
+        filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+        transition: transform 0.3s ease;
+    }
+
+    .login-logos img:hover {
+        transform: scale(1.06);
+    }
+
+    .logo-divider {
+        width: 1px;
+        height: 48px;
+        background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.35), transparent);
+    }
+
+    .login-welcome {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: rgba(147,197,253,0.85) !important;
+        margin-bottom: 6px;
+    }
+
+    .login-title {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 22px;
+        font-weight: 800;
+        color: white !important;
+        letter-spacing: -0.3px;
+        text-align: center;
+        line-height: 1.2;
+    }
+
+    .login-subtitle {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+        color: rgba(255,255,255,0.45) !important;
+        margin-top: 4px;
+        text-align: center;
+    }
+
+    /* Sembunyikan brand bawaan Filament di login */
+    .fi-simple-main .fi-logo,
+    .fi-simple-main [class*="brand"] {
+        display: none !important;
+    }
+
+    /* ── SEMUA TEKS ── */
     .fi-simple-main,
     .fi-simple-main * {
         color: white !important;
+        font-family: "Plus Jakarta Sans", sans-serif !important;
     }
 
+    /* Transparent backgrounds */
     .fi-simple-main *:not(button):not(svg):not(path):not(input[type="checkbox"]) {
         background: transparent !important;
         background-color: transparent !important;
     }
 
+    /* ── LABEL ── */
+    .fi-simple-main label {
+        font-size: 12.5px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.3px !important;
+        color: rgba(255,255,255,0.75) !important;
+        margin-bottom: 6px !important;
+        display: block;
+    }
+
+    /* ── INPUT ── */
     .fi-simple-main input:not([type="checkbox"]) {
         border: none !important;
         box-shadow: none !important;
         outline: none !important;
         color: white !important;
         background: transparent !important;
+        font-size: 14px !important;
+        padding: 10px 14px !important;
+        font-family: "Plus Jakarta Sans", sans-serif !important;
     }
 
+    /* Wrapper email */
     .fi-simple-main .fi-input-wrapper,
     .fi-simple-main div:has(> input[type="email"]),
     .fi-simple-main div:has(> input:not([type="password"]):not([type="checkbox"])) {
-        border: 1px solid rgba(255, 255, 255, 0.6) !important;
-        border-radius: 8px !important;
-        background: transparent !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 10px !important;
+        background: rgba(255,255,255,0.05) !important;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s !important;
     }
 
     .fi-simple-main .fi-input-wrapper:focus-within,
     .fi-simple-main div:has(> input[type="email"]):focus-within {
-        border: 1px solid white !important;
-        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
+        border-color: rgba(147,197,253,0.7) !important;
+        box-shadow: 0 0 0 3px rgba(99,179,237,0.15) !important;
+        background: rgba(255,255,255,0.08) !important;
     }
 
+    /* Wrapper password */
     .fi-simple-main .fi-input-wrp-suffix {
         border: none !important;
         background: transparent !important;
@@ -203,60 +272,170 @@ class PanitiaPanelProvider extends PanelProvider
     }
 
     .fi-simple-main div:has(> .fi-input-wrp-suffix) {
-        border: 1px solid rgba(255, 255, 255, 0.6) !important;
-        border-radius: 8px !important;
-        background: transparent !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 10px !important;
+        background: rgba(255,255,255,0.05) !important;
         display: flex !important;
         align-items: center !important;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s !important;
     }
 
     .fi-simple-main div:has(> .fi-input-wrp-suffix):focus-within {
-        border: 1px solid white !important;
-        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
+        border-color: rgba(147,197,253,0.7) !important;
+        box-shadow: 0 0 0 3px rgba(99,179,237,0.15) !important;
+        background: rgba(255,255,255,0.08) !important;
     }
 
     .fi-simple-main input::placeholder {
-        color: rgba(255, 255, 255, 0.4) !important;
+        color: rgba(255, 255, 255, 0.3) !important;
     }
 
+    /* ── CHECKBOX ── */
     .fi-simple-main input[type="checkbox"] {
-        border: 1px solid rgba(255, 255, 255, 0.6) !important;
-        accent-color: white !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
+        border-radius: 4px !important;
+        accent-color: #93c5fd !important;
         width: 16px !important;
         height: 16px !important;
         background: transparent !important;
         flex-shrink: 0 !important;
     }
 
+    /* ── ICON MATA ── */
     .fi-simple-main button:not([type="submit"]) {
         border: none !important;
         box-shadow: none !important;
         background: transparent !important;
         outline: none !important;
+        opacity: 0.6;
+        transition: opacity 0.2s;
+    }
+    .fi-simple-main button:not([type="submit"]):hover {
+        opacity: 1;
     }
 
+    /* ── TOMBOL SIGN IN ── */
     .fi-simple-main button[type="submit"] {
-        background: rgba(255, 255, 255, 0.15) !important;
-        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        background: linear-gradient(135deg, rgba(59,130,246,0.7) 0%, rgba(37,99,235,0.8) 100%) !important;
+        border: 1px solid rgba(147,197,253,0.4) !important;
         color: white !important;
-        border-radius: 8px !important;
+        border-radius: 10px !important;
+        font-weight: 700 !important;
+        font-size: 14px !important;
+        letter-spacing: 0.4px !important;
+        padding: 11px 20px !important;
+        width: 100% !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 4px 16px rgba(37,99,235,0.3) !important;
+        font-family: "Plus Jakarta Sans", sans-serif !important;
     }
 
     .fi-simple-main button[type="submit"]:hover {
-        background: rgba(255, 255, 255, 0.25) !important;
+        background: linear-gradient(135deg, rgba(96,165,250,0.85) 0%, rgba(59,130,246,0.9) 100%) !important;
+        box-shadow: 0 6px 24px rgba(37,99,235,0.45) !important;
+        transform: translateY(-1px) !important;
     }
 
+    .fi-simple-main button[type="submit"]:active {
+        transform: translateY(0) !important;
+    }
+
+    /* ── AUTOFILL ── */
     .fi-simple-main input:-webkit-autofill,
     .fi-simple-main input:-webkit-autofill:hover,
     .fi-simple-main input:-webkit-autofill:focus {
-        -webkit-box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0.01) inset !important;
+        -webkit-box-shadow: 0 0 0px 1000px rgba(15,23,42,0.01) inset !important;
         -webkit-text-fill-color: white !important;
         transition: background-color 5000s ease-in-out 0s;
     }
-</style>')
+
+    /* ── ANIMASI FIELDS ── */
+    .fi-simple-main .fi-fo-field-wrp {
+        animation: fadeUp 0.5s ease both;
+    }
+    .fi-simple-main .fi-fo-field-wrp:nth-child(1) { animation-delay: 0.65s; }
+    .fi-simple-main .fi-fo-field-wrp:nth-child(2) { animation-delay: 0.75s; }
+    .fi-simple-main .fi-fo-field-wrp:nth-child(3) { animation-delay: 0.85s; }
+    .fi-simple-main .fi-form-actions { animation: fadeUp 0.5s ease 0.95s both; }
+
+    /* ── ERROR ── */
+    .fi-simple-main .fi-fo-field-wrp-error-message {
+        color: rgba(252,165,165,0.9) !important;
+        font-size: 12px !important;
+        margin-top: 4px !important;
+    }
+
+    /* ── LINK forgot password ── */
+    .fi-simple-main a {
+        color: rgba(147,197,253,0.8) !important;
+        font-size: 12px !important;
+        text-decoration: none !important;
+        transition: color 0.2s !important;
+    }
+    .fi-simple-main a:hover {
+        color: white !important;
+    }
+
+        /* ── CHECKBOX REMEMBER ME ── */
+    .fi-simple-main .fi-checkbox-label-wrapper,
+    .fi-simple-main label:has(input[type="checkbox"]),
+    .fi-simple-main .flex.items-center {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex-direction: row !important;
+    }
+
+    .fi-simple-main input[type="checkbox"] {
+        position: static !important;
+        transform: none !important;
+        flex-shrink: 0 !important;
+        margin: 0 !important;
+        top: unset !important;
+    }
+
+    /* label teks Remember me */
+    .fi-simple-main .fi-checkbox-label-wrapper span,
+    .fi-simple-main label:has(input[type="checkbox"]) span {
+        vertical-align: middle !important;
+        line-height: 1 !important;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const main = document.querySelector(".fi-simple-main");
+        if (!main) return;
+
+        // Sembunyikan brand bawaan Filament
+        const brand = main.querySelector(".fi-logo, [class*=\"brand\"]");
+        if (brand) brand.style.display = "none";
+
+        // Buat header section
+        const header = document.createElement("div");
+        header.className = "login-header";
+        header.innerHTML = `
+            <div class="login-logos">
+                <img src="/images/logo-bgn.png" alt="Logo BGN" />
+                <div class="logo-divider"></div>
+                <img src="/images/Logo_SMKN5_Banda_Aceh.png" alt="Logo SMKN 5 Banda Aceh" />
+            </div>
+            <div class="login-welcome">Selamat Datang</div>
+            <div class="login-title">Portal Panitia</div>
+            <div class="login-subtitle">Silakan masuk dengan akun Anda</div>
+        `;
+
+        main.insertBefore(header, main.firstChild);
+    });
+</script>
+        ')
         : ''
 )
-->brandLogo(fn () => view('filament.hooks.logo-mbg'))
-->brandName('');
+        ->brandLogo(fn () => view('filament.hooks.logo-mbg'))
+        ->brandName('');
+        // ->renderHook(
+        //     PanelsRenderHook::USER_MENU_BEFORE,
+        //     fn (): View => view('filament.hooks.logo-mbg'),
+        // );
     }
 }
