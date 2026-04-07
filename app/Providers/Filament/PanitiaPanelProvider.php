@@ -375,31 +375,30 @@ class PanitiaPanelProvider extends PanelProvider
     .fi-simple-main a:hover {
         color: white !important;
     }
-
         /* ── CHECKBOX REMEMBER ME ── */
-    .fi-simple-main .fi-checkbox-label-wrapper,
-    .fi-simple-main label:has(input[type="checkbox"]),
-    .fi-simple-main .flex.items-center {
-        display: flex !important;
-        align-items: center !important;
-        gap: 8px !important;
-        flex-direction: row !important;
-    }
+.fi-simple-main .fi-checkbox-label-wrapper,
+.fi-simple-main label:has(input[type="checkbox"]),
+.fi-simple-main .flex.items-center {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-direction: row !important;
+}
 
-    .fi-simple-main input[type="checkbox"] {
-        position: static !important;
-        transform: none !important;
-        flex-shrink: 0 !important;
-        margin: 0 !important;
-        top: unset !important;
-    }
+.fi-simple-main input[type="checkbox"] {
+    position: static !important;
+    transform: none !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    top: unset !important;
+}
 
-    /* label teks Remember me */
-    .fi-simple-main .fi-checkbox-label-wrapper span,
-    .fi-simple-main label:has(input[type="checkbox"]) span {
-        vertical-align: middle !important;
-        line-height: 1 !important;
-    }
+/* label teks Remember me */
+.fi-simple-main .fi-checkbox-label-wrapper span,
+.fi-simple-main label:has(input[type="checkbox"]) span {
+    vertical-align: middle !important;
+    line-height: 1 !important;
+}
 </style>
 
 <script>
