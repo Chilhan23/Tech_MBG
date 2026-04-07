@@ -74,14 +74,82 @@ class PanitiaPanelProvider extends PanelProvider
 ->renderHook(
     'panels::body.start',
     fn () => request()->routeIs('filament.panitia.auth.login')
-        ? Blade::render('
-            <style>
+        ? Blade::render('<style>
     body {
-        background-image: url("/images/mbg-bg3.png");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
+        background-color: #0f2027;
+        background-image:
+            radial-gradient(ellipse 80% 60% at 20% 10%, rgba(6, 182, 212, 0.18) 0%, transparent 60%),
+            radial-gradient(ellipse 60% 80% at 80% 90%, rgba(16, 185, 129, 0.15) 0%, transparent 60%),
+            radial-gradient(ellipse 70% 50% at 60% 40%, rgba(59, 130, 246, 0.10) 0%, transparent 55%),
+            radial-gradient(ellipse 90% 70% at 10% 80%, rgba(6, 95, 70, 0.20) 0%, transparent 60%);
+        animation: gradientShift 12s ease-in-out infinite alternate;
         min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+    }
+
+    body::after {
+        content: "";
+        position: fixed;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, transparent 70%);
+        top: -150px;
+        right: -100px;
+        animation: orbFloat 18s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    @keyframes gradientShift {
+        0% {
+            background-image:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(6, 182, 212, 0.18) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 90%, rgba(16, 185, 129, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 70% 50% at 60% 40%, rgba(59, 130, 246, 0.10) 0%, transparent 55%),
+                radial-gradient(ellipse 90% 70% at 10% 80%, rgba(6, 95, 70, 0.20) 0%, transparent 60%);
+        }
+        33% {
+            background-image:
+                radial-gradient(ellipse 80% 60% at 70% 30%, rgba(16, 185, 129, 0.18) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 20% 70%, rgba(6, 182, 212, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 70% 50% at 80% 80%, rgba(6, 95, 70, 0.12) 0%, transparent 55%),
+                radial-gradient(ellipse 90% 70% at 40% 10%, rgba(59, 130, 246, 0.14) 0%, transparent 60%);
+        }
+        66% {
+            background-image:
+                radial-gradient(ellipse 80% 60% at 40% 80%, rgba(59, 130, 246, 0.16) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 60% 20%, rgba(6, 95, 70, 0.18) 0%, transparent 60%),
+                radial-gradient(ellipse 70% 50% at 10% 50%, rgba(16, 185, 129, 0.10) 0%, transparent 55%),
+                radial-gradient(ellipse 90% 70% at 85% 60%, rgba(6, 182, 212, 0.14) 0%, transparent 60%);
+        }
+        100% {
+            background-image:
+                radial-gradient(ellipse 80% 60% at 55% 15%, rgba(6, 95, 70, 0.18) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 30% 85%, rgba(59, 130, 246, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 70% 50% at 75% 55%, rgba(6, 182, 212, 0.12) 0%, transparent 55%),
+                radial-gradient(ellipse 90% 70% at 15% 30%, rgba(16, 185, 129, 0.16) 0%, transparent 60%);
+        }
+    }
+
+    @keyframes orbFloat {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33%       { transform: translate(-60px, 80px) scale(1.1); }
+        66%       { transform: translate(40px, -50px) scale(0.9); }
+    }
+
+    @keyframes cardReveal {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+            filter: blur(6px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+        }
     }
 
     .fi-simple-main {
@@ -92,21 +160,9 @@ class PanitiaPanelProvider extends PanelProvider
         border-radius: 16px !important;
         opacity: 0;
         animation: cardReveal 0.8s ease 1s forwards;
+        position: relative;
+        z-index: 1;
     }
-
-    @keyframes cardReveal {
-        from {
-        opacity: 0;
-        transform: translateY(30px);
-        filter: blur(6px);
-    }
-        to {
-        opacity: 1;
-        transform: translateY(0);
-        filter: blur(0);
-        }
-    }
-
 
     .fi-simple-main,
     .fi-simple-main * {
@@ -126,29 +182,26 @@ class PanitiaPanelProvider extends PanelProvider
         background: transparent !important;
     }
 
-    /* Wrapper input email - border putih */
-.fi-simple-main .fi-input-wrapper,
-.fi-simple-main div:has(> input[type="email"]),
-.fi-simple-main div:has(> input:not([type="password"]):not([type="checkbox"])) {
-    border: 1px solid rgba(255, 255, 255, 0.6) !important;
-    border-radius: 8px !important;
-    background: transparent !important;
-}
+    .fi-simple-main .fi-input-wrapper,
+    .fi-simple-main div:has(> input[type="email"]),
+    .fi-simple-main div:has(> input:not([type="password"]):not([type="checkbox"])) {
+        border: 1px solid rgba(255, 255, 255, 0.6) !important;
+        border-radius: 8px !important;
+        background: transparent !important;
+    }
 
-.fi-simple-main .fi-input-wrapper:focus-within,
-.fi-simple-main div:has(> input[type="email"]):focus-within {
-    border: 1px solid white !important;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
-}
+    .fi-simple-main .fi-input-wrapper:focus-within,
+    .fi-simple-main div:has(> input[type="email"]):focus-within {
+        border: 1px solid white !important;
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
+    }
 
-    /* Wrapper password + icon mata nyatu */
     .fi-simple-main .fi-input-wrp-suffix {
         border: none !important;
         background: transparent !important;
         display: flex !important;
     }
 
-    /* Parent dari input + suffix yang jadi border utama password */
     .fi-simple-main div:has(> .fi-input-wrp-suffix) {
         border: 1px solid rgba(255, 255, 255, 0.6) !important;
         border-radius: 8px !important;
@@ -166,7 +219,6 @@ class PanitiaPanelProvider extends PanelProvider
         color: rgba(255, 255, 255, 0.4) !important;
     }
 
-    /* Checkbox remember me */
     .fi-simple-main input[type="checkbox"] {
         border: 1px solid rgba(255, 255, 255, 0.6) !important;
         accent-color: white !important;
@@ -176,7 +228,6 @@ class PanitiaPanelProvider extends PanelProvider
         flex-shrink: 0 !important;
     }
 
-    /* Icon mata - hapus border */
     .fi-simple-main button:not([type="submit"]) {
         border: none !important;
         box-shadow: none !important;
@@ -184,7 +235,6 @@ class PanitiaPanelProvider extends PanelProvider
         outline: none !important;
     }
 
-    /* Button Sign in */
     .fi-simple-main button[type="submit"] {
         background: rgba(255, 255, 255, 0.15) !important;
         border: 1px solid rgba(255, 255, 255, 0.4) !important;
@@ -203,15 +253,10 @@ class PanitiaPanelProvider extends PanelProvider
         -webkit-text-fill-color: white !important;
         transition: background-color 5000s ease-in-out 0s;
     }
-</style> 
-        ')
+</style>')
         : ''
 )
-        ->brandLogo(fn () => view('filament.hooks.logo-mbg'))
-        ->brandName('');
-        // ->renderHook(
-        //     PanelsRenderHook::USER_MENU_BEFORE,
-        //     fn (): View => view('filament.hooks.logo-mbg'),
-        // );
+->brandLogo(fn () => view('filament.hooks.logo-mbg'))
+->brandName('');
     }
 }
