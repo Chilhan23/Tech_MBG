@@ -4,25 +4,27 @@
         alt="Logo SMKN 5"
         style="height: 38px; width: auto; object-fit: contain;"
     >
-    <div style="width: 1px; height: 32px; background: rgba(255,255,255,0.15);"></div>
+    <div style="width: 1px; height: 32px; background: #e5e7eb; transition: background-color 0.3s;" class="logo-divider"></div>
     <div style="display: flex; flex-direction: column; gap: 0px;">
         <span style="
             font-size: 13px; 
             font-weight: 700; 
-            color: #fff; 
+            color: #1f2937; 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             line-height: 1.3;
-        ">Aplikasi MBG ScanCare</span>
+            transition: color 0.3s;
+        " class="logo-title">Aplikasi MBG ScanCare</span>
         <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
             <div style="height: 1px; width: 16px; background: #3b82f6;"></div>
             <span style="
                 font-size: 10px; 
-                color: #93c5fd; 
+                color: #0369a1; 
                 font-family: 'Plus Jakarta Sans', sans-serif; 
                 font-weight: 500; 
                 letter-spacing: 1.2px; 
                 text-transform: uppercase;
-            ">Makan Bergizi Gratis</span>
+                transition: color 0.3s;
+            " class="logo-subtitle">Makan Bergizi Gratis</span>
             <div style="height: 1px; width: 16px; background: #3b82f6;"></div>
         </div>
     </div>

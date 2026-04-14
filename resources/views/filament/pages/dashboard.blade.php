@@ -54,7 +54,7 @@
         <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">
             {{ $greeting }}, {{ $userName }}!
         </h1>
-        <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">
+        <p class="text-sm text-gray-600 dark:text-gray-500 mt-1">
             {{ $stats['tanggal'] }}
         </p>
     </div>
@@ -114,7 +114,7 @@
            data-countup="{{ $stats['total_siswa'] }}">
             {{ number_format($stats['total_siswa']) }}
         </p>
-        <p class="text-sm text-gray-500 mt-1">Total siswa</p>
+        <p class="text-sm text-gray-600 mt-1">Total siswa</p>
         <span class="inline-block mt-2 px-2.5 py-1 rounded-full text-xs font-medium
                      bg-blue-50 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
             {{ $stats['scope'] }}
@@ -132,7 +132,7 @@
            data-countup="{{ $stats['sudah_ambil'] }}">
             {{ number_format($stats['sudah_ambil']) }}
         </p>
-        <p class="text-sm text-gray-500 mt-1">Sudah ambil MBG</p>
+        <p class="text-sm text-gray-600 mt-1">Sudah ambil MBG</p>
         <span class="inline-block mt-2 px-2.5 py-1 rounded-full text-xs font-medium
                      bg-green-50 text-green-800 dark:bg-green-900/40 dark:text-green-300">
             {{ $stats['persen'] }}% dari total
@@ -156,7 +156,7 @@
            data-countup="{{ $stats['belum_ambil'] }}">
             {{ number_format($stats['belum_ambil']) }}
         </p>
-        <p class="text-sm text-gray-500 mt-1">Belum ambil MBG</p>
+        <p class="text-sm text-gray-600 mt-1">Belum ambil MBG</p>
         <span class="inline-block mt-2 px-2.5 py-1 rounded-full text-xs font-medium
                      {{ $stats['belum_ambil'] > 0
                          ? 'bg-red-50 text-red-800 dark:bg-red-900/40 dark:text-red-300'
@@ -178,10 +178,10 @@
     <div class="xl:col-span-3 bg-white dark:bg-gray-800 rounded-2xl border
                 border-gray-100 dark:border-gray-700 p-5">
         <div class="flex items-center justify-between mb-3">
-            <p class="text-xs uppercase tracking-wider font-medium text-gray-400">
+            <p class="text-xs uppercase tracking-wider font-medium text-gray-600">
                 Tren absensi 7 hari terakhir
             </p>
-            <span class="flex items-center gap-1.5 text-xs text-gray-400">
+            <span class="flex items-center gap-1.5 text-xs text-gray-600">
                 <span class="w-2.5 h-2.5 rounded-sm bg-green-500 inline-block"></span>Sudah ambil
             </span>
         </div>
@@ -193,7 +193,7 @@
     {{-- Progress Per Kelas --}}
     <div class="xl:col-span-2 bg-white dark:bg-gray-800 rounded-2xl border
                 border-gray-100 dark:border-gray-700 p-5">
-        <p class="text-xs uppercase tracking-wider font-medium text-gray-400 mb-4">
+        <p class="text-xs uppercase tracking-wider font-medium text-gray-600 mb-4">
             Progress per kelas
         </p>
         <div class="flex flex-col gap-3">
@@ -210,7 +210,7 @@
                             <span class="text-sm font-medium text-gray-700 dark:text-gray-200">
                                 {{ $k['nama'] }}
                             </span>
-                            <span class="text-xs text-gray-400 ml-1">
+                            <span class="text-xs text-gray-600 ml-1">
                                 {{ $k['sudah'] }}/{{ $k['total'] }}
                             </span>
                         </div>
@@ -234,14 +234,14 @@
 <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100
             dark:border-gray-700 p-5 db-anim-6">
     <div class="flex items-center gap-4 mb-3">
-        <p class="text-xs uppercase tracking-wider font-medium text-gray-400">
+        <p class="text-xs uppercase tracking-wider font-medium text-gray-600">
             Distribusi absensi per kelas hari ini
         </p>
         <div class="flex gap-3 ml-auto">
-            <span class="flex items-center gap-1.5 text-xs text-gray-400">
+            <span class="flex items-center gap-1.5 text-xs text-gray-600">
                 <span class="w-2.5 h-2.5 rounded-sm bg-green-500 inline-block"></span>Sudah
             </span>
-            <span class="flex items-center gap-1.5 text-xs text-gray-400">
+            <span class="flex items-center gap-1.5 text-xs text-gray-600">
                 <span class="w-2.5 h-2.5 rounded-sm bg-red-400 inline-block"></span>Belum
             </span>
         </div>

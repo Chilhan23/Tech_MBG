@@ -38,6 +38,8 @@ class StudentsTable
         $toolbarActions[] = Action::make('import')
             ->label('Masukan Data Siswa/i Lewat Excel')
             ->icon('heroicon-o-arrow-up-tray')
+            ->button()
+            ->color('info')
             ->form([
                 FileUpload::make('file')
                     ->label('Format: NISN, Nama, Jurusan, Kelas, Jenis Kelamin')
