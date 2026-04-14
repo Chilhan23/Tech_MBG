@@ -86,4 +86,46 @@ input[type="checkbox"]:checked {
     background-size: contain;
 }
 
-/* Form buttons are now handled via PHP in CreateKelas/CreateStudent */
+/* ─────────────────────────────────────────────────────────────────
+   FORM SAVE/CREATE BUTTONS - TEXT VISIBILITY ONLY
+   ───────────────────────────────────────────────────────────────── */
+
+/* Target form action section and its buttons */
+.fi-form-actions {
+    display: flex !important;
+    gap: 0.75rem !important;
+    visibility: visible !important;
+}
+
+.fi-form-actions button,
+.fi-form-actions > button {
+    background-color: rgb(59 130 246) !important;
+    color: white !important;
+    border: 1px solid rgb(59 130 246) !important;
+    border-radius: 0.375rem !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    height: auto !important;
+    min-height: 2.5rem !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* Text/spans inside form action buttons */
+.fi-form-actions button *,
+.fi-form-actions button span {
+    color: white !important;
+    visibility: inherit !important;
+}
+
+/* Hover state for form buttons */
+.fi-form-actions button:hover,
+.fi-form-actions button:focus {
+    background-color: rgb(37 99 235) !important;
+    border-color: rgb(37 99 235) !important;
+}

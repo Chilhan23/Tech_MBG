@@ -1,5 +1,4 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
-@import './fixes.css';
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';

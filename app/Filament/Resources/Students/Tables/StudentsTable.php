@@ -9,6 +9,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -91,16 +92,20 @@ class StudentsTable
         if (!$isAdmin) {
             $filters[] = SelectFilter::make('jurusan')
                 ->label('Jurusan')
+                ->placeholder('Pilih Jurusan')
                 ->options([
                     'Rekayasa Perangkat Lunak'     => 'Rekayasa Perangkat Lunak',
                     'Teknik Komputer dan Jaringan' => 'Teknik Komputer dan Jaringan',
                     'Tehnik Jaringan Akses'        => 'Tehnik Jaringan Akses',
                     'Perfilman'                    => 'Perfilman',
-                ]);
+                ])
+                ->native(true);
 
             $filters[] = SelectFilter::make('kelas_id')
                 ->label('Kelas')
-                ->relationship('kelas', 'nama_kelas');
+                ->placeholder('Pilih Kelas')
+                ->relationship('kelas', 'nama_kelas')
+                ->native(true);
         }
 
         return $table
@@ -124,7 +129,10 @@ class StudentsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters($filters)
+            ->filters($filters, layout: FiltersLayout::AboveContent)
+            ->filtersFormColumns(2)
+            ->deferFilters(false)
+            ->filtersApplyAction(fn () => null)
             ->modifyQueryUsing(function (Builder $query) use ($isAdmin, $user) {
                 if ($isAdmin) {
                     // Filter berdasarkan nama_kelas di tabel relasi kelas
