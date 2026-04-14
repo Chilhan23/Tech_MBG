@@ -28,4 +28,16 @@ class EditStudent extends EditRecord
                 ->icon('heroicon-o-chevron-left'),
         ];
     }
+
+    protected function getFormActions(): array
+    {
+        return [
+            Action::make('save')
+                ->label('Simpan Perubahan')
+                ->submit('save')
+                ->button()
+                ->color('info'),
+            $this->getCancelFormAction(),
+        ];
+    }
 }
