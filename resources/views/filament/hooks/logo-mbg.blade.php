@@ -12,7 +12,7 @@
             color: #fff; 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             line-height: 1.3;
-        ">SMKN 5 Telkom</span>
+        ">Aplikasi MBG ScanCare</span>
         <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
             <div style="height: 1px; width: 16px; background: #3b82f6;"></div>
             <span style="
