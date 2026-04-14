@@ -17,7 +17,7 @@ class ListStudents extends ListRecords
                 ->label('Tambah Siswa')
                 ->icon('heroicon-o-plus')
                 ->button()
-                ->color('success'),
+                ->color('info'),
         ];
     }
 }

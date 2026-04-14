@@ -20,36 +20,53 @@ label {
     color: rgb(17 24 39) !important;
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   LOGO MBG - THEME AWARE
-   ───────────────────────────────────────────────────────────────── */
-
-@media (prefers-color-scheme: light) {
-    .logo-title {
-        color: #1f2937 !important;
-    }
-    
-    .logo-subtitle {
-        color: #0369a1 !important;
-    }
-    
-    .logo-divider {
-        background-color: #e5e7eb !important;
-    }
+/* Exclude logo from label color rule */
+.logo-title,
+.logo-subtitle {
+    color: inherit !important;
 }
 
-@media (prefers-color-scheme: dark) {
-    .logo-title {
-        color: #ffffff !important;
-    }
-    
-    .logo-subtitle {
-        color: #93c5fd !important;
-    }
-    
-    .logo-divider {
-        background-color: rgba(255, 255, 255, 0.15) !important;
-    }
+/* ─────────────────────────────────────────────────────────────────
+   LOGO MBG - THEME AWARE (Using Filament's dark class)
+   ───────────────────────────────────────────────────────────────── */
+
+/* Default/fallback logo colors for light mode */
+.logo-title {
+    color: #1f2937 !important;
+}
+
+.logo-subtitle {
+    color: #0369a1 !important;
+}
+
+.logo-divider {
+    background-color: #e5e7eb !important;
+}
+
+/* Dark mode logo colors - Filament adds 'dark' class to html */
+html.dark .logo-title {
+    color: #ffffff !important;
+}
+
+html.dark .logo-subtitle {
+    color: #93c5fd !important;
+}
+
+html.dark .logo-divider {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Light mode logo colors - explicit (when html doesn't have 'dark' class) */
+html:not(.dark) .logo-title {
+    color: #1f2937 !important;
+}
+
+html:not(.dark) .logo-subtitle {
+    color: #0369a1 !important;
+}
+
+html:not(.dark) .logo-divider {
+    background-color: #e5e7eb !important;
 }
 
 /* ─────────────────────────────────────────────────────────────────
@@ -68,3 +85,5 @@ input[type="checkbox"]:checked {
     background-position: center;
     background-size: contain;
 }
+
+/* Form buttons are now handled via PHP in CreateKelas/CreateStudent */

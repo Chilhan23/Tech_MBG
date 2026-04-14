@@ -13,7 +13,11 @@ class ListUsers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->label('Tambah Akun Kelas')
+                ->icon('heroicon-o-plus')
+                ->button()
+                ->color('info'),
         ];
     }
 }

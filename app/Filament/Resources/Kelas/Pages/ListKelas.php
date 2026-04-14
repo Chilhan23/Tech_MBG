@@ -17,7 +17,7 @@ class ListKelas extends ListRecords
                 ->label('Tambah Kelas')
                 ->icon('heroicon-o-plus')
                 ->button()
-                ->color('success'),
+                ->color('info'),
         ];
     }
 }
