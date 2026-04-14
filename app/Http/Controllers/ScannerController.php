@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\KelasLog;
@@ -57,7 +58,7 @@ class ScannerController extends Controller
         ], $extra);
     }
 
-    // Siswa Ambil MBG
+    // ── Siswa Ambil MBG ──
     public function apiStore(Request $request)
     {
         $data = $request->validate(['nisn' => ['required', 'string']]);
@@ -93,7 +94,7 @@ class ScannerController extends Controller
         ]);
     }
 
-    // Siswa Kembalikan MBG
+    // ── Siswa Kembalikan MBG ──
     public function apiReturn(Request $request)
     {
         $data = $request->validate(['nisn' => ['required', 'string']]);
@@ -138,10 +139,68 @@ class ScannerController extends Controller
         ]);
     }
 
-    // Scanner Kelas (Admin) - Ambil/Kembalikan MBG sekaligus untuk seluruh kelas
+    // ── Scanner Kelas — Cek Status (tanpa ubah data) ──
+    public function apiKelasCheck(Request $request)
+    {
+        $namaKelas = $request->query('nama_kelas');
+
+        if (!$namaKelas) {
+            return response()->json(['found' => false, 'message' => 'Nama kelas wajib diisi.'], 422);
+        }
+
+        $kelas = Kelas::withCount('students')->where('nama_kelas', $namaKelas)->first();
+
+        if (!$kelas) {
+            return response()->json(['found' => false, 'message' => 'Kelas tidak ditemukan.'], 404);
+        }
+
+        $log = KelasLog::where('kelas_id', $kelas->id)
+            ->whereDate('tanggal', today())
+            ->first();
+
+        if (!$log) {
+            return response()->json([
+                'found'        => true,
+                'status'       => 'belum_diambil',
+                'jumlah_siswa' => $kelas->students_count,
+                'message'      => "Kelas {$kelas->nama_kelas} belum mengambil MBG hari ini.",
+            ]);
+        }
+
+        if ($log->dikembalikan) {
+            return response()->json([
+                'found'   => true,
+                'status'  => 'selesai',
+                'message' => "MBG kelas {$kelas->nama_kelas} sudah selesai hari ini.",
+                'kelas'   => [
+                    'nama_kelas'    => $kelas->nama_kelas,
+                    'status'        => 'selesai',
+                    'waktu_ambil'   => $log->diambil?->format('H:i'),
+                    'waktu_kembali' => $log->dikembalikan->format('H:i'),
+                ],
+            ]);
+        }
+
+        return response()->json([
+            'found'   => true,
+            'status'  => 'sudah_diambil',
+            'message' => "Kelas {$kelas->nama_kelas} sudah mengambil — proses pengembalian.",
+            'kelas'   => [
+                'nama_kelas'     => $kelas->nama_kelas,
+                'status'         => 'sudah_diambil',
+                'waktu_ambil'    => $log->diambil?->format('H:i'),
+                'jumlah_ompreng' => $log->jumlah_ompreng,
+            ],
+        ]);
+    }
+
+    // ── Scanner Kelas — Ambil / Kembalikan MBG ──
     public function apiKelasStore(Request $request)
     {
-        $data = $request->validate(['nama_kelas' => ['required', 'string']]);
+        $data = $request->validate([
+            'nama_kelas'     => ['required', 'string'],
+            'jumlah_ompreng' => ['nullable', 'integer', 'min:1'],
+        ]);
 
         $kelas = Kelas::where('nama_kelas', $data['nama_kelas'])->first();
 
@@ -160,16 +219,22 @@ class ScannerController extends Controller
         if (!$log) {
             $now = now();
             $kelas->update(['diambil' => $now, 'dikembalikan' => null]);
-            KelasLog::create(['kelas_id' => $kelas->id, 'tanggal' => today(), 'diambil' => $now]);
+            KelasLog::create([
+                'kelas_id'       => $kelas->id,
+                'tanggal'        => today(),
+                'diambil'        => $now,
+                'jumlah_ompreng' => $data['jumlah_ompreng'] ?? null,
+            ]);
 
             return response()->json([
                 'success' => true,
                 'message' => "MBG kelas {$kelas->nama_kelas} berhasil diambil!",
                 'kelas'   => [
-                    'nama_kelas'    => $kelas->nama_kelas,
-                    'status'        => 'diambil',
-                    'waktu_ambil'   => $now->format('H:i:s'),
-                    'batas_kembali' => $now->copy()->addHour()->format('H:i'),
+                    'nama_kelas'     => $kelas->nama_kelas,
+                    'status'         => 'diambil',
+                    'waktu_ambil'    => $now->format('H:i:s'),
+                    'jumlah_ompreng' => $data['jumlah_ompreng'] ?? null,
+                    'batas_kembali'  => $now->copy()->addHour()->format('H:i'),
                 ],
             ]);
         }
@@ -192,23 +257,32 @@ class ScannerController extends Controller
         return $this->processKelasReturn($kelas, $log);
     }
 
+    // ── Proses Pengembalian MBG Kelas ──
     private function processKelasReturn(Kelas $kelas, KelasLog $log)
     {
         $studentIds = Student::where('kelas_id', $kelas->id)->pluck('id');
 
-        $absensi = Absensi::whereIn('student_id', $studentIds)->whereDate('waktu_ambil', today())->count();
-        $kembali = Absensi::whereIn('student_id', $studentIds)->whereDate('waktu_kembali', today())->count();
+        $jumlahScanAmbil   = Absensi::whereIn('student_id', $studentIds)->whereDate('waktu_ambil', today())->count();
+        $jumlahScanKembali = Absensi::whereIn('student_id', $studentIds)->whereNotNull('waktu_kembali')->whereDate('waktu_kembali', today())->count();
+        $jumlahOmpreng     = (int) ($log->jumlah_ompreng ?? 0);
+        $sisaOmpreng       = max(0, $jumlahOmpreng - $jumlahScanAmbil);
 
-        if ($absensi !== $kembali) {
+        // ── Tolak: masih ada yang scan ambil tapi belum scan kembali ──
+        // Ompreng boleh lebih banyak dari scan ambil (sisa ompreng = tidak diambil siswa)
+        // Yang wajib: semua yang scan ambil harus sudah scan kembali
+        if ($jumlahScanAmbil !== $jumlahScanKembali) {
+            $belumKembali = $jumlahScanAmbil - $jumlahScanKembali;
             return response()->json([
                 'success' => false,
-                'message' => 'Masih ada siswa yang belum mengembalikan / Scan Kembalikan MBG!',
+                'message' => "Masih ada {$belumKembali} siswa yang belum scan Kembalikan MBG!",
                 'kelas'   => [
-                    'nama_kelas'    => $kelas->nama_kelas,
-                    'status'        => 'belum semua kembali',
-                    'absensi'       => $absensi,
-                    'kembali'       => $kembali,
-                    'belum_kembali' => $absensi - $kembali,
+                    'nama_kelas'         => $kelas->nama_kelas,
+                    'status'             => 'belum_semua_kembali',
+                    'ompreng_diambil'    => $jumlahOmpreng,
+                    'siswa_scan_ambil'   => $jumlahScanAmbil,
+                    'siswa_scan_kembali' => $jumlahScanKembali,
+                    'belum_kembali'      => $belumKembali,
+                    'sisa_ompreng'       => $sisaOmpreng,
                 ],
             ], 422);
         }
@@ -217,6 +291,7 @@ class ScannerController extends Controller
         $menitDiambil = (int) $log->diambil->diffInMinutes($now);
         $batasKembali = $log->diambil->copy()->addHour();
 
+        // ── Tolak: terlalu cepat ──
         if ($menitDiambil < 5) {
             return response()->json([
                 'success' => false,
@@ -231,6 +306,7 @@ class ScannerController extends Controller
             ], 422);
         }
 
+        // ── Tolak: terlambat ──
         if ($now->isAfter($batasKembali)) {
             $terlambat = $batasKembali->diffInMinutes($now);
             return response()->json([
@@ -246,6 +322,7 @@ class ScannerController extends Controller
             ], 422);
         }
 
+        // ── Terima: semua scan ambil sudah scan kembali ──
         $kelas->update(['dikembalikan' => $now]);
         $log->update(['dikembalikan' => $now]);
 
@@ -253,16 +330,20 @@ class ScannerController extends Controller
             'success' => true,
             'message' => "MBG kelas {$kelas->nama_kelas} berhasil dikembalikan!",
             'kelas'   => [
-                'nama_kelas'    => $kelas->nama_kelas,
-                'status'        => 'dikembalikan',
-                'waktu_ambil'   => $log->diambil->format('H:i'),
-                'waktu_kembali' => $now->format('H:i:s'),
-                'batas_kembali' => $batasKembali->format('H:i'),
+                'nama_kelas'         => $kelas->nama_kelas,
+                'status'             => 'dikembalikan',
+                'waktu_ambil'        => $log->diambil->format('H:i'),
+                'waktu_kembali'      => $now->format('H:i:s'),
+                'batas_kembali'      => $batasKembali->format('H:i'),
+                'ompreng_diambil'    => $jumlahOmpreng,
+                'siswa_scan_ambil'   => $jumlahScanAmbil,
+                'siswa_scan_kembali' => $jumlahScanKembali,
+                'sisa_ompreng'       => $sisaOmpreng,
             ],
         ]);
     }
 
-    // ── STATS ──
+    // ── Stats ──
     public function stats(Request $request)
     {
         $user    = Auth::user();
@@ -280,7 +361,7 @@ class ScannerController extends Controller
         ]);
     }
 
-    // ── PRINT ──
+    // ── Print ──
     public function print(Student $student)
     {
         return view('print_qr', compact('student'));

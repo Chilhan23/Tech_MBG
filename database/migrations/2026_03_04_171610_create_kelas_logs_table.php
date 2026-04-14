@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('kelas_id')->constrained('kelas')->cascadeOnDelete();
             $table->date('tanggal');
+            $table->integer('jumlah_ompreng')->nullable();
             $table->timestamp('diambil')->nullable();
             $table->timestamp('dikembalikan')->nullable();
             $table->timestamps();

@@ -17,6 +17,7 @@ Route::middleware([FilamentAuthenticate::class])->group(function () {
     // --- API Scanner Kelas (Pusat) ---
     // Mode Ambil & Kembali khusus Box Ompreng Kelas
     Route::post('/scanner/api/kelas', [ScannerController::class, 'apiKelasStore'])->name('scanner.api.kelas');
+    Route::get('/scanner/kelas/check', [ScannerController::class, 'apiKelasCheck'])->name('scanner.api.kelas.check');
 
     // --- Stats & PDF ---
     Route::get('/scanner/stats', [ScannerController::class, 'stats'])->name('scanner.stats');
