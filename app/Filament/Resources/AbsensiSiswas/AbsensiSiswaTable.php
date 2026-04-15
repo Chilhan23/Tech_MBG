@@ -12,12 +12,12 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component as Livewire;
 
 class AbsensiSiswaTable
 {
@@ -30,34 +30,59 @@ class AbsensiSiswaTable
         $filters = [];
 
         if ($isSuperAdmin) {
-            $filters[] = SelectFilter::make('tingkat')
+            $filters[] = Filter::make('tingkat')
                 ->label('Tingkat Kelas')
-                ->options(['10' => 'Kelas 10', '11' => 'Kelas 11', '12' => 'Kelas 12'])
-                ->query(fn (Builder $q, array $data) => $q->when(
-                    $data['value'] ?? null,
-                    fn ($q2, $v) => $q2->whereHas('student.kelas',
-                        fn ($q3) => $q3->where('nama_kelas', 'like', $v . ' %'))
-                ));
+                ->form([
+                    Select::make('tingkat')
+                        ->label('Tingkat')
+                        ->placeholder('Semua')
+                        ->options(['10' => 'Kelas 10', '11' => 'Kelas 11', '12' => 'Kelas 12']),
+                ])
+                ->query(function (Builder $q, array $data) {
+                    if (!empty($data['tingkat'])) {
+                        $studentIds = Student::whereHas('kelas', fn ($k) => 
+                            $k->where('nama_kelas', 'like', $data['tingkat'] . ' %'))->pluck('id');
+                        $q->whereIn('student_id', $studentIds);
+                    }
+                    return $q;
+                });
 
-            $filters[] = SelectFilter::make('jurusan')
+            $filters[] = Filter::make('jurusan')
                 ->label('Jurusan')
-                ->options(fn () => Student::distinct()->orderBy('jurusan')
-                    ->pluck('jurusan', 'jurusan')->toArray())
-                ->query(fn (Builder $q, array $data) => $q->when(
-                    $data['value'] ?? null,
-                    fn ($q2, $v) => $q2->whereHas('student',
-                        fn ($q3) => $q3->where('jurusan', $v))
-                ));
+                ->form([
+                    Select::make('jurusan')
+                        ->label('Jurusan')
+                        ->placeholder('Semua')
+                        ->options([
+                            'Rekayasa Perangkat Lunak' => 'Rekayasa Perangkat Lunak',
+                            'Teknik Komputer dan Jaringan' => 'Teknik Komputer dan Jaringan',
+                            'Teknik Jaringan Akses' => 'Teknik Jaringan Akses',
+                            'Perfilman' => 'Perfilman',
+                        ]),
+                ])
+                ->query(function (Builder $q, array $data) {
+                    if (!empty($data['jurusan'])) {
+                        $studentIds = Student::where('jurusan', $data['jurusan'])->pluck('id');
+                        $q->whereIn('student_id', $studentIds);
+                    }
+                    return $q;
+                });
 
-            $filters[] = SelectFilter::make('kelas')
+            $filters[] = Filter::make('kelas_filter')
                 ->label('Kelas')
-                ->options(fn () => Kelas::orderBy('nama_kelas')
-                    ->pluck('nama_kelas', 'id')->toArray())
-                ->query(fn (Builder $q, array $data) => $q->when(
-                    $data['value'] ?? null,
-                    fn ($q2, $v) => $q2->whereHas('student',
-                        fn ($q3) => $q3->where('kelas_id', $v))
-                ));
+                ->form([
+                    Select::make('kelas_id')
+                        ->label('Kelas')
+                        ->placeholder('Semua')
+                        ->options(fn () => Kelas::orderBy('nama_kelas')->pluck('nama_kelas', 'id')->toArray()),
+                ])
+                ->query(function (Builder $q, array $data) {
+                    if (!empty($data['kelas_id'])) {
+                        $studentIds = Student::where('kelas_id', $data['kelas_id'])->pluck('id');
+                        $q->whereIn('student_id', $studentIds);
+                    }
+                    return $q;
+                });
         }
 
         $filters[] = Filter::make('tanggal')
@@ -150,16 +175,15 @@ class AbsensiSiswaTable
                     ->placeholder('Belum kembali')
                     ->sortable()->visible($isAdmin || $isSuperAdmin),
             ])
-            ->filters($filters)
-            ->modifyQueryUsing(function (Builder $query, Livewire $livewire) use ($isAdmin, $user) {
+            // ->filters($filters, layout: FiltersLayout::AboveContent)
+            // ->filtersFormColumns(2)
+            // ->deferFilters(false)
+            // ->filtersApplyAction(fn () => null)
+            ->modifyQueryUsing(function (Builder $query) use ($isAdmin, $user) {
                 if ($isAdmin) {
-                    $query->whereHas('student',
-                        fn ($q) => $q->where('kelas_id', $user->kelas_id));
-                }
-                $filterData = $livewire->tableFilters['tanggal'] ?? [];
-                $adaFilter  = !empty($filterData['dari_tanggal']) || !empty($filterData['sampai_tanggal']);
-                if (!$adaFilter) {
-                    $query->whereDate('waktu_ambil', today());
+                    // Filter ke kelas user saja (admin hanya lihat data kelasnya)
+                    $query->whereIn('student_id',
+                        Student::where('kelas_id', $user->kelas_id)->pluck('id'));
                 }
             })
             ->toolbarActions($toolbarActions)
