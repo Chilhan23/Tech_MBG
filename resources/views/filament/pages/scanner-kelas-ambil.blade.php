@@ -199,6 +199,45 @@
     #reader__dashboard_section_fsr span, #reader__filescan_input { display: none !important; }
 
     /* ── Modal ── */
+    /* ── MODAL BODY - DARK ── */
+    .sc-modal {
+        background: #0f172a !important;
+        border-color: #1e3a8a !important;
+    }
+    .sc-modal-body {
+        background: #0f172a !important;
+    }
+    .sc-modal-info {
+        background: #1e293b !important;
+        border-color: #1e3a8a !important;
+        color: #93c5fd !important;
+    }
+    .sc-modal-label {
+        color: #60a5fa !important;
+    }
+    .sc-modal-footer {
+        background: #0f172a !important;
+        border-top-color: #1e3a8a !important;
+    }
+    .sc-modal-cancel {
+        background: #1e293b !important;
+        border-color: #1e3a8a !important;
+        color: #93c5fd !important;
+    }
+    .sc-modal-cancel:hover {
+        background: #1e3a8a !important;
+        color: white !important;
+    }
+    .sc-modal-chip {
+        background: #1e293b !important;
+        border-color: #1e3a8a !important;
+        color: #93c5fd !important;
+    }
+    .sc-modal-chip:hover {
+        background: #1e3a8a !important;
+        color: white !important;
+        border-color: #3b82f6 !important;
+    }
     .sc-modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
     .sc-modal-backdrop.open { opacity: 1; pointer-events: all; }
     .sc-modal { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 18px; box-shadow: var(--shadow-lg); width: 100%; max-width: 420px; overflow: hidden; transform: translateY(20px) scale(0.97); transition: transform 0.25s cubic-bezier(.22,.68,0,1.2); }
@@ -206,12 +245,39 @@
     .sc-modal-head { background: var(--c-red-bg); border-bottom: 1px solid var(--c-red-bdr); padding: 1.25rem 1.5rem 1rem; }
     .dark .sc-modal-head { background: #2d0a0a; border-color: #7f1d1d; }
     .sc-modal-kelas-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--c-accent); color: white; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; margin-bottom: 10px; }
-    .sc-modal-title { font-size: 1.15rem; font-weight: 800; color: var(--c-text); letter-spacing: -0.02em; margin-bottom: 4px; }
-    .sc-modal-sub { font-size: 0.8125rem; color: var(--c-text-2); font-weight: 500; }
+    .sc-modal-title { font-size: 1.15rem; font-weight: 800; color: var(--c-text); letter-spacing: -0.02em; margin-bottom: 4px; color: #93c5fd !important; }
+    .sc-modal-sub { font-size: 0.8125rem; color: var(--c-text-2); font-weight: 500; color: #93c5fd !important; }
     .sc-modal-body { padding: 1.25rem 1.5rem; }
     .sc-modal-info { display: flex; align-items: center; gap: 10px; background: var(--c-surface-2); border: 1px solid var(--c-border); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 1.1rem; font-size: 0.8125rem; color: var(--c-text-2); font-weight: 500; }
     .sc-modal-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--c-text-3); margin-bottom: 8px; display: block; }
     .sc-modal-input-wrap { display: flex; align-items: center; border: 2px solid var(--c-border); border-radius: var(--radius-sm); overflow: hidden; transition: border-color 0.15s, box-shadow 0.15s; background: var(--c-bg); }
+    /* ── INPUT JUMLAH OMPRENG - DARK BG ── */
+    .sc-modal-input-wrap {
+        background: #0f172a !important;
+        border-color: #1e3a8a !important;
+    }
+    .sc-modal-input-wrap:focus-within {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59,130,246,.2) !important;
+        background: #0f172a !important;
+    }
+    .sc-modal-stepper {
+        background: #1e293b !important;
+        color: #93c5fd !important;
+    }
+    .sc-modal-stepper:hover {
+        background: #1e3a8a !important;
+    }
+    .sc-modal-stepper.minus {
+        border-right-color: #1e3a8a !important;
+    }
+    .sc-modal-stepper.plus {
+        border-left-color: #1e3a8a !important;
+    }
+    #modal-jumlah {
+        color: #e0f2fe !important;
+        background: transparent !important;
+    }
     .sc-modal-input-wrap:focus-within { border-color: var(--c-accent); box-shadow: 0 0 0 3px rgba(220,38,38,.12); }
     .sc-modal-stepper { width: 42px; height: 52px; border: none; background: var(--c-surface-2); color: var(--c-text); font-size: 1.25rem; font-weight: 700; cursor: pointer; transition: background 0.12s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; user-select: none; }
     .sc-modal-stepper:hover { background: var(--c-border); }

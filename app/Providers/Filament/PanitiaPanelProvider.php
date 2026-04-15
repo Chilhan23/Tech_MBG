@@ -38,6 +38,7 @@ class PanitiaPanelProvider extends PanelProvider
             ->path('panitia')
             ->viteTheme('resources/css/filament/panitia/theme.css')
             ->login(Login::class)
+            ->darkMode(false)
             ->colors([
                 'primary' => Color::Blue,
             ])
@@ -80,7 +81,17 @@ class PanitiaPanelProvider extends PanelProvider
             <style>
     * { box-sizing: border-box; }
 
+    /* ── PAKSA DARK MODE & BACKGROUND ── */
+    html, html.dark {
+        color-scheme: dark !important;
+    }
+
     body {
+        background-color: #0a0f1e !important;
+        background-image:
+            radial-gradient(ellipse at 20% 50%, rgba(30,58,138,0.45) 0%, transparent 60%),
+            radial-gradient(ellipse at 80% 20%, rgba(15,23,42,0.7) 0%, transparent 50%),
+            radial-gradient(ellipse at 60% 80%, rgba(23,37,84,0.3) 0%, transparent 50%) !important;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -93,7 +104,7 @@ class PanitiaPanelProvider extends PanelProvider
         content: "";
         position: fixed;
         inset: 0;
-        background: linear-gradient(135deg, rgba(0,20,60,0.72) 0%, rgba(0,0,0,0.55) 100%);
+        background: linear-gradient(135deg, rgba(0,20,60,0.5) 0%, rgba(0,0,0,0.35) 100%);
         z-index: 0;
     }
 
@@ -375,34 +386,41 @@ class PanitiaPanelProvider extends PanelProvider
     .fi-simple-main a:hover {
         color: white !important;
     }
-        /* ── CHECKBOX REMEMBER ME ── */
-.fi-simple-main .fi-checkbox-label-wrapper,
-.fi-simple-main label:has(input[type="checkbox"]),
-.fi-simple-main .flex.items-center {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    flex-direction: row !important;
-}
 
-.fi-simple-main input[type="checkbox"] {
-    position: static !important;
-    transform: none !important;
-    flex-shrink: 0 !important;
-    margin: 0 !important;
-    top: unset !important;
-}
+    /* ── CHECKBOX REMEMBER ME ── */
+    .fi-simple-main .fi-checkbox-label-wrapper,
+    .fi-simple-main label:has(input[type="checkbox"]),
+    .fi-simple-main .flex.items-center {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex-direction: row !important;
+    }
 
-/* label teks Remember me */
-.fi-simple-main .fi-checkbox-label-wrapper span,
-.fi-simple-main label:has(input[type="checkbox"]) span {
-    vertical-align: middle !important;
-    line-height: 1 !important;
-}
+    .fi-simple-main input[type="checkbox"] {
+        position: static !important;
+        transform: none !important;
+        flex-shrink: 0 !important;
+        margin: 0 !important;
+        top: unset !important;
+    }
+
+    .fi-simple-main .fi-checkbox-label-wrapper span,
+    .fi-simple-main label:has(input[type="checkbox"]) span {
+        vertical-align: middle !important;
+        line-height: 1 !important;
+    }
 </style>
 
 <script>
+    // Paksa dark mode sebelum Filament render
+    document.documentElement.classList.add("dark");
+    localStorage.setItem("theme", "dark");
+
     document.addEventListener("DOMContentLoaded", function () {
+        // Pastikan dark class tetap ada
+        document.documentElement.classList.add("dark");
+
         const main = document.querySelector(".fi-simple-main");
         if (!main) return;
 
@@ -432,9 +450,5 @@ class PanitiaPanelProvider extends PanelProvider
 )
         ->brandLogo(fn () => view('filament.hooks.logo-mbg'))
         ->brandName('');
-        // ->renderHook(
-        //     PanelsRenderHook::USER_MENU_BEFORE,
-        //     fn (): View => view('filament.hooks.logo-mbg'),
-        // );
     }
 }
