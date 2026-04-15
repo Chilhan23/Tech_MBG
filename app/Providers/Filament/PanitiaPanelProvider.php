@@ -38,7 +38,8 @@ class PanitiaPanelProvider extends PanelProvider
             ->path('panitia')
             ->viteTheme('resources/css/filament/panitia/theme.css')
             ->login(Login::class)
-            ->darkMode(false)
+            
+            // ->darkMode(false)
             ->colors([
                 'primary' => Color::Blue,
             ])
