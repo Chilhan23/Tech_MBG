@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🏫 Tech MBG
+#  Tech MBG
 ### Digital Attendance & Student Management System
 
 <p>
