@@ -23,21 +23,21 @@
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
 | Feature | Description |
 |---------|-------------|
-| 🔍 **QR Code Scanner** | Scan via browser camera or external USB/Wireless scanner |
-| 📊 **Real-Time Dashboard** | Monitor live attendance stats with interactive widgets |
-| 👨‍🎓 **Student Management** | Add, edit, and manage student profiles and class assignments |
-| 🖨️ **Bulk QR Printing** | Generate and print QR codes for all students at once |
-| 📄 **PDF Export** | Produce professional, formatted attendance reports |
-| 📥 **Excel Import** | Bulk-import students and users via spreadsheet |
-| 🔐 **Secure Authentication** | Session-protected admin panel for authorized staff only |
+|  **QR Code Scanner** | Scan via browser camera or external USB/Wireless scanner |
+|  **Real-Time Dashboard** | Monitor live attendance stats with interactive widgets |
+|  **Student Management** | Add, edit, and manage student profiles and class assignments |
+|  **Bulk QR Printing** | Generate and print QR codes for all students at once |
+|  **PDF Export** | Produce professional, formatted attendance reports |
+|  **Excel Import** | Bulk-import students and users via spreadsheet |
+|  **Secure Authentication** | Session-protected admin panel for authorized staff only |
 
 ---
 
-## 🗂️ Folder Structure
+##  Folder Structure
 
 ```
 Tech_MBG/
@@ -183,15 +183,15 @@ Visit `http://localhost:8000` — you will be automatically redirected to the `/
 
 ---
 
-## 🚀 Usage Guide
+##  Usage Guide
 
-### 1. 🔑 Accessing the Admin Panel
+### 1.  Accessing the Admin Panel
 
 Navigate to your root domain — you will be redirected to `/panitia` automatically. Sign in with your authorized admin credentials to unlock all management tools.
 
 ---
 
-### 2. 📊 Real-Time Dashboard
+### 2.  Real-Time Dashboard
 
 Once logged in, the **Dashboard** gives you an instant overview of operations:
 
@@ -200,7 +200,7 @@ Once logged in, the **Dashboard** gives you an instant overview of operations:
 
 ---
 
-### 3. 👨‍🎓 Managing Students & QR Codes
+### 3.  Managing Students & QR Codes
 
 - **Add / Edit Students** — Use the **Students** resource menu to manage student profiles.
 - **Print Single QR** — Open a student's profile and generate their individual QR code.
@@ -208,7 +208,7 @@ Once logged in, the **Dashboard** gives you an instant overview of operations:
 
 ---
 
-### 4. 📷 Recording Attendance (Scanning)
+### 4.  Recording Attendance (Scanning)
 
 The QR scanner is the core of the system:
 
@@ -221,7 +221,7 @@ The QR scanner is the core of the system:
 
 ---
 
-### 5. 📄 Reports & Data Export
+### 5.  Reports & Data Export
 
 - **View Logs** — Open the **Absensis** menu to see every recorded attendance entry.
 - **Export PDF** — Generate a formatted, professional attendance report using the **Export PDF** tool, ready for archival or administrative submission.
@@ -243,7 +243,7 @@ The QR scanner is the core of the system:
 
 ---
 
-## 👥 Contributors
+##  Contributors
 
 Thanks to everyone who has contributed to this project! 🎉
 
@@ -263,6 +263,6 @@ This project is open-source and available under the [MIT License](LICENSE).
 
 <div align="center">
 
-Made with ❤️ by the **Tech MBG Team**
+Made  by the **LastSeenIn2027**
 
 </div>
