@@ -247,11 +247,11 @@ The QR scanner is the core of the system:
 
 Thanks to everyone who has contributed to this project! 🎉
 
-| Avatar | Name | GitHub | Commits |
+| Avatar | Name | GitHub | Role |
 |--------|------|--------|---------|
-| <img src="https://github.com/Chilhan23.png" width="48" style="border-radius:50%"/> | **Chilhan23** | [@Chilhan23](https://github.com/Chilhan23) | 75 commits |
-| <img src="https://github.com/qannn0607.png" width="48" style="border-radius:50%"/> | **qannn0607** | [@qannn0607](https://github.com/qannn0607) | 20 commits |
-| <img src="https://github.com/rXonee.png" width="48" style="border-radius:50%"/> | **rXonee** | [@rXonee](https://github.com/rXonee) | 13 commits |
+| <img src="https://github.com/Chilhan23.png" width="48" style="border-radius:50%"/> | **Chilhan23** | [@Chilhan23](https://github.com/Chilhan23) | Backend Developer |
+| <img src="https://github.com/qannn0607.png" width="48" style="border-radius:50%"/> | **qannn0607** | [@qannn0607](https://github.com/qannn0607) | UI/UX Designer |
+| <img src="https://github.com/rXonee.png" width="48" style="border-radius:50%"/> | **rXonee** | [@rXonee](https://github.com/rXonee) | Frontend Developer |
 
 ---
 
