@@ -18,215 +18,184 @@
         }
 
         .wrapper {
-            background: white;
+            width: 100%;
+            max-width: 900px;
             padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
             text-align: center;
         }
 
-        .card {
-            width: 85.6mm;
-            height: 54mm;
-            border-radius: 12px;
-            background: #ffffff;
-            color: #1e293b;
-            display: flex;
-            flex-direction: column;
-            padding: 0;
-            box-sizing: border-box;
-            position: relative;
-            overflow: hidden;
-            margin: 0 auto 20px auto;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-
-        .card-header {
-            background: #0068b3;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-        }
-
-        .instansi-logo {
-            width: 32px;
-            height: 32px;
+        .preview-card {
             background: white;
-            border-radius: 6px;
+            border-radius: 24px;
+            padding: 35px 30px;
+            box-shadow: 0 30px 60px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e2e8f0;
+            margin: 0 auto 20px auto;
+            max-width: 700px;
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .logo-badge {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: white;
+            border: 1px solid #cbd5e1;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            border: 2px solid white;
         }
 
-        .instansi-logo img {
+        .logo-badge img {
             width: 100%;
             height: 100%;
             object-fit: contain;
         }
 
-        .school-name { line-height: 1.1; text-align: left; }
-        .school-name b { font-size: 11px; text-transform: uppercase; font-weight: 800; }
-        .school-name span { font-size: 8px; display: block; opacity: 0.9; }
-
-        .card-type {
-            font-size: 7px;
-            font-weight: 800;
-            text-transform: uppercase;
-            background: #ffd700;
-            color: #0068b3;
-            padding: 2px 7px;
-            border-radius: 20px;
-            margin-left: auto;
-        }
-
-        .card-body {
-            flex-grow: 1;
-            padding: 15px;
-            display: grid;
-            grid-template-columns: 1fr 90px;
-            align-items: center;
-        }
-
-        .main-info {
+        .header-copy {
             text-align: left;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
         }
 
-        .info-row { display: flex; flex-direction: column; }
-
-        .info-row label {
-            font-size: 7px;
-            color: #94a3b8;
-            text-transform: uppercase;
-            font-weight: 700;
+        .header-copy h1 {
+            margin: 0;
+            font-size: 22px;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+            font-weight: 800;
         }
 
-        .info-row span {
-            font-size: 11px;
-            font-weight: 700;
-            color: #1e293b;
-            text-transform: uppercase;
+        .header-copy p {
+            margin: 6px 0 0;
+            color: #475569;
+            font-size: 13px;
         }
 
-        .qr-section {
-            display: flex;
+        .qr-wrap {
+            display: inline-flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            width: 320px;
+            padding: 25px;
+            border-radius: 20px;
+            background: #ffffff;
             border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            background: white;
-            padding: 5px;
+            box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
         }
 
-        .qr-label {
-            font-size: 6px;
-            color: #0068b3;
+        .qr-wrap .qr-label {
+            margin-top: 16px;
+            font-size: 10px;
             font-weight: 800;
-            margin-top: 4px;
+            color: #0369a1;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
         }
 
-        .card-footer {
-            background: #0068b3;
-            height: 25px;
-            display: flex;
+        .class-info {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .class-info .info-card {
+            display: inline-flex;
+            flex-direction: column;
             align-items: center;
-            padding: 0 15px;
-            font-size: 8px;
-            color: white;
-            font-weight: 600;
-            justify-content: space-between;
+            justify-content: center;
+            width: 320px;
+            padding: 18px 24px;
+            border-radius: 18px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            margin: 0 auto;
         }
 
-        button {
-            background: #0068b3;
+        .class-info .info-card label {
+            display: block;
+            margin-bottom: 10px;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .class-info .info-card span {
+            display: block;
+            color: #0f172a;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .print-button {
+            background: #0369a1;
             color: white;
             border: none;
-            padding: 12px 25px;
-            border-radius: 10px;
+            border-radius: 12px;
+            padding: 14px 26px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 16px 30px rgba(3, 105, 161, 0.18);
+            transition: transform 0.2s ease;
+        }
+
+        .print-button:hover {
+            transform: translateY(-1px);
         }
 
         @media print {
             @page { size: A4 portrait; margin: 0; }
             body { background: white; }
-            .wrapper { box-shadow: none; padding: 20mm; }
-            button, .header-text { display: none; }
-            .card {
-                margin: 0 auto;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
+            .wrapper { padding: 0; }
+            .print-button, .preview-header { display: none; }
+            .preview-card {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                border-radius: 0;
+                width: 100%;
+                max-width: none;
             }
         }
     </style>
 </head>
 <body>
     <div class="wrapper">
-        <div class="header-text">
-            <h1 style="margin-top:0; color:#0068b3; font-weight:800;">QR Kelas SMKN 5 Telkom</h1>
-            <p style="color:#64748b; font-size:14px; margin-bottom:25px;">{{ $kelas->nama_kelas }}</p>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <div class="logo-section">
-                    <div class="instansi-logo">
-                        <img src="https://smkn5telkom.sch.id/images/front/site/logo/Logo_SMKN5_Banda_Aceh.png" alt="Logo SMKN 5 Telkom BNA">
-                    </div>
-                    <div class="school-name">
-                        <b>SMKN 5 TELKOM BNA</b>
-                        <span>Banda Aceh</span>
-                    </div>
+        <div class="preview-card">
+            <div class="preview-header">
+                <div class="logo-badge">
+                    <img src="https://smkn5telkom.sch.id/images/front/site/logo/Logo_SMKN5_Banda_Aceh.png" alt="Logo SMKN 5 Telkom BNA">
                 </div>
-                <div class="card-type">QR KELAS MBG</div>
-            </div>
-
-            <div class="card-body">
-                <div class="main-info">
-                    <div class="info-row">
-                        <label>Nama Kelas</label>
-                        <span>{{ $kelas->nama_kelas }}</span>
-                    </div>
-                    <div class="info-row">
-                        <label>Jumlah Siswa</label>
-                        <span>{{ $kelas->students()->count() }} Siswa</span>
-                    </div>
-                    <div class="info-row">
-                        <label>Tahun Ajaran</label>
-                        <span>{{ now()->format('Y') }}</span>
-                    </div>
-                </div>
-
-                <div class="qr-section">
-                    {!! QrCode::size(75)->margin(0)->color(0, 104, 179)->generate($kelas->nama_kelas) !!}
-                    <div class="qr-label">SCAN QR CODE</div>
+                <div class="header-copy">
+                    <h1>QR Kelas SMKN 5 Telkom</h1>
+                    <p>{{ $kelas->nama_kelas }}</p>
                 </div>
             </div>
 
-            <div class="card-footer">
-                <span>BERLAKU SELAMA TAHUN AJARAN AKTIF</span>
-                <span style="color:#ffd700; font-weight:800">SMK BISA!</span>
+            <div class="qr-wrap">
+                {!! QrCode::size(220)->margin(0)->color(0, 104, 179)->generate($kelas->nama_kelas) !!}
+                <div class="qr-label">Scan QR Kelas</div>
+            </div>
+
+            <div class="class-info">
+                <div class="info-card">
+                    <label>Nama Kelas</label>
+                    <span>{{ $kelas->nama_kelas }}</span>
+                </div>
             </div>
         </div>
 
-        <button onclick="window.print()">Cetak QR Kelas</button>
+        <button class="print-button" onclick="window.print()">Cetak QR Kelas</button>
     </div>
 </body>
 </html>
