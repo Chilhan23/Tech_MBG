@@ -1,6 +1,6 @@
 <div style="display: flex; align-items: center; gap: 12px;">
     <img 
-        src="{{ asset('images/Logo_SMKN5_Banda_Aceh.png') }}" 
+        src="{{ asset('images/Logo_SMKN5_Banda_Aceh.webp') }}" 
         alt="Logo SMKN 5"
         style="height: 38px; width: auto; object-fit: contain;"
     >

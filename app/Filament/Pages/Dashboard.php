@@ -4,9 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Filament\Widgets\AbsensiStatsWidget;
 use App\Filament\Widgets\AbsensiPerKelasWidget;
-use App\Models\Absensi;
-use App\Models\Kelas;
-use App\Models\Student;
+use App\Services\AbsensiStatsService;
 use Filament\Pages\Page;
 use BackedEnum;
 use Illuminate\Support\Facades\Auth;
@@ -32,70 +30,20 @@ class Dashboard extends Page
 
         $this->isSuperAdmin = $user->role === 'superadmin';
         $this->userName     = $user->name;
-        $this->greeting     = match(true) {
+        $this->greeting     = match (true) {
             $hour < 11 => 'Selamat pagi',
             $hour < 15 => 'Selamat siang',
             $hour < 18 => 'Selamat sore',
             default    => 'Selamat malam',
         };
 
-        $studentQ = Student::query();
-        if (!$this->isSuperAdmin) {
-            $studentQ->where('kelas_id', $user->kelas_id);
-        }
-        $totalSiswa = $studentQ->count();
+        // Delegasikan semua kalkulasi ke AbsensiStatsService.
+        // Service sudah handle caching (60 detik) dan query yang memanfaatkan
+        // composite index (waktu_ambil, student_id).
+        $service = app(AbsensiStatsService::class);
 
-        $absensiQ = Absensi::whereDate('waktu_ambil', today());
-        if (!$this->isSuperAdmin) {
-            $absensiQ->whereHas('student', fn($q) => $q->where('kelas_id', $user->kelas_id));
-        }
-        $sudahAmbil = $absensiQ->distinct('student_id')->count();
-
-        $this->stats = [
-            'total_siswa' => $totalSiswa,
-            'sudah_ambil' => $sudahAmbil,
-            'belum_ambil' => max(0, $totalSiswa - $sudahAmbil),
-            'persen'      => $totalSiswa > 0 ? round($sudahAmbil / $totalSiswa * 100, 1) : 0,
-            'scope'       => $this->isSuperAdmin ? 'Semua kelas' : 'Kelas ' . $user->kelas->nama_kelas,
-            'tanggal'     => now()->translatedFormat('l, d F Y'),
-        ];
-
-        $kelasQuery = Kelas::select('kelas.id', 'kelas.nama_kelas')
-            ->selectRaw('(
-                SELECT COUNT(students.id)
-                FROM students
-                WHERE students.kelas_id = kelas.id
-            ) as total')
-            ->selectRaw('COALESCE((
-                SELECT COUNT(DISTINCT absensis.student_id)
-                FROM absensis
-                JOIN students ON absensis.student_id = students.id
-                WHERE students.kelas_id = kelas.id
-                AND DATE(absensis.waktu_ambil) = CURDATE()
-            ), 0) as sudah')
-            ->orderBy('nama_kelas');
-
-        if (!$this->isSuperAdmin) {
-            $kelasQuery->where('kelas.id', $user->kelas_id);
-        }
-
-        $this->kelasData = $kelasQuery->get()
-            ->map(fn($k) => [
-                'nama'  => $k->nama_kelas,
-                'total' => (int) ($k->total ?? 0),
-                'sudah' => (int) ($k->sudah ?? 0),
-            ])->toArray();
-
-        $this->trendData = collect(range(6, 0))->map(function ($ago) use ($user) {
-            $date = today()->subDays($ago);
-            $q    = Absensi::whereDate('waktu_ambil', $date);
-            if (!$this->isSuperAdmin) {
-                $q->whereHas('student', fn($q2) => $q2->where('kelas_id', $user->kelas_id));
-            }
-            return [
-                'label'       => $date->translatedFormat('D'),
-                'sudah_ambil' => $q->distinct('student_id')->count(),
-            ];
-        })->values()->toArray();
+        $this->stats     = $service->getStats($user);
+        $this->kelasData = $service->getKelasData($user);
+        $this->trendData = $service->getTrendData($user);
     }
 }

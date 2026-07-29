@@ -434,9 +434,9 @@ class PanitiaPanelProvider extends PanelProvider
         header.className = "login-header";
         header.innerHTML = `
             <div class="login-logos">
-                <img src="/images/logo-bgn.png" alt="Logo BGN" />
+                <img src="/images/logo-bgn.webp" alt="Logo BGN" />
                 <div class="logo-divider"></div>
-                <img src="/images/Logo_SMKN5_Banda_Aceh.png" alt="Logo SMKN 5 Banda Aceh" />
+                <img src="/images/Logo_SMKN5_Banda_Aceh.webp" alt="Logo SMKN 5 Banda Aceh" />
             </div>
             <div class="login-welcome">Selamat Datang</div>
             <div class="login-title">Portal Panitia</div>
